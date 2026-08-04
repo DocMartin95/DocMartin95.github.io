@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suspectrum — Find Your Powers</title>
+<style>
+  :root{
+    --bg:#0b0e17; --panel:#141a28; --panel2:#1b2336; --ink:#eaf0ff; --dim:#9fb0d0;
+    --line:#28324a; --accent:#5ad1ff; --accent2:#c08bff; --good:#5fe3a1; --warn:#ffb454; --bad:#ff6b8a;
+    --autism:#5ad1ff; --adhd:#ffb454; --shared:#c08bff;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:radial-gradient(1200px 600px at 70% -10%,#182036 0,transparent 60%),var(--bg);
+    color:var(--ink);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:900px;margin:0 auto;padding:20px 16px 90px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:6px 2px 14px}
+  .brand{font-weight:800;letter-spacing:.02em;background:linear-gradient(100deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;font-size:18px}
+  .navbtn{cursor:pointer;font-size:13px;color:var(--dim);border:1px solid var(--line);background:var(--panel);border-radius:9px;padding:7px 11px;user-select:none}
+  .navbtn:hover{color:var(--ink);border-color:var(--accent)}
+  h1{font-size:clamp(28px,6vw,46px);margin:.1em 0;line-height:1.05;
+    background:linear-gradient(100deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  h2{font-size:22px;margin:20px 0 6px}
+  .kicker{letter-spacing:.3em;font-size:11px;color:var(--accent);text-transform:uppercase}
+  .lead{color:var(--dim);max-width:640px}
+  .screen{display:none;animation:fade .3s ease}
+  .screen.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .btn{cursor:pointer;border:none;border-radius:12px;padding:13px 20px;font-size:15px;font-weight:700;
+    background:linear-gradient(100deg,var(--accent),var(--accent2));color:#06121a;transition:.15s}
+  .btn:hover{filter:brightness(1.08);transform:translateY(-1px)}
+  .btn.ghost{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
+  .btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+  .hero{padding:28px 4px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+  .chip{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--dim)}
+  .chip .dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  .panelbox{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin:14px 0}
+  .warnbox{background:rgba(255,180,84,.08);border:1px solid var(--warn);border-radius:12px;padding:12px 14px;font-size:13px;color:#ffe6c2;margin:14px 0}
+  /* quiz */
+  .prog{height:8px;background:var(--panel2);border-radius:99px;overflow:hidden;margin:8px 0 20px;border:1px solid var(--line)}
+  .prog>div{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .3s}
+  .qcount{font-size:12px;color:var(--dim);letter-spacing:.1em;text-transform:uppercase}
+  .qtext{font-size:22px;font-weight:600;margin:10px 0 22px;min-height:2.4em}
+  .likert{display:grid;gap:9px}
+  .lk{cursor:pointer;border:1px solid var(--line);background:var(--panel);border-radius:12px;padding:14px 16px;font-size:15px;text-align:left;color:var(--ink);transition:.12s}
+  .lk:hover{border-color:var(--accent);transform:translateX(3px)}
+  .lk.sel{background:linear-gradient(100deg,rgba(90,209,255,.18),rgba(192,139,255,.18));border-color:var(--accent)}
+  .qnav{display:flex;justify-content:space-between;margin-top:20px}
+  /* results */
+  .primary{text-align:center;padding:22px 10px 8px}
+  .primary .em{font-size:64px}
+  .primary h1{font-size:clamp(30px,7vw,50px)}
+  .origin-badge{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:5px 13px;margin-top:6px;letter-spacing:.05em}
+  .bar{height:22px;border-radius:7px;background:var(--panel2);overflow:hidden;border:1px solid var(--line);position:relative}
+  .bar>span{position:absolute;left:9px;top:0;line-height:22px;font-size:12px;font-weight:600;z-index:2;color:var(--ink)}
+  .bar>div{height:100%;transition:width .6s}
+  .constellation{display:grid;gap:10px;margin-top:8px}
+  .cst{display:grid;grid-template-columns:132px 1fr;align-items:center;gap:10px}
+  .cst .nm{font-size:13px}
+  .recgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:6px}
+  .rec{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:13px}
+  .rec .lbl{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+  .lbl{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--accent)}
+  .shine{color:var(--good)} .kry{color:var(--bad)}
+  /* explore */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:11px}
+  .power{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px;cursor:pointer;transition:.15s;position:relative}
+  .power:hover{transform:translateY(-3px);border-color:var(--accent)}
+  .power .em{font-size:24px}
+  .power h3{margin:5px 0 2px;font-size:15px}
+  .power .an{color:var(--accent2);font-size:11.5px}
+  .otag{position:absolute;top:10px;right:10px;width:9px;height:9px;border-radius:50%}
+  select,input[type=text]{background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-size:14px;width:100%}
+  label.fld{display:block;font-size:12px;color:var(--dim);margin:12px 0 4px}
+  .verdict{margin-top:14px;padding:15px;border-radius:14px;border:1px solid var(--line);background:var(--panel2)}
+  .verdict.syn{border-color:var(--good)} .verdict.fri{border-color:var(--warn)}
+  .vtag{font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+  .row{display:flex;gap:14px;flex-wrap:wrap}
+  .col{flex:1;min-width:230px}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  .cbrow{display:flex;gap:10px;align-items:flex-start;margin:10px 0;font-size:13.5px;color:var(--dim)}
+  .cbrow input{margin-top:3px;flex:none;width:18px;height:18px;accent-color:var(--accent)}
+  .foot{margin-top:30px;font-size:12px;color:var(--dim);border-top:1px solid var(--line);padding-top:16px}
+  a{color:var(--accent)}
+  .modal{position:fixed;inset:0;background:rgba(5,8,15,.72);display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
+  .modal.open{display:flex}
+  .card{background:var(--panel2);border:1px solid var(--line);border-radius:18px;max-width:500px;width:100%;padding:22px;position:relative;max-height:88vh;overflow:auto}
+  .card .x{position:absolute;top:10px;right:15px;cursor:pointer;color:var(--dim);font-size:22px}
+  .pill{display:inline-block;font-size:11px;color:var(--dim);border:1px solid var(--line);border-radius:999px;padding:3px 9px;margin:6px 6px 0 0}
+  .kv{margin-top:12px}.kv .lbl{display:block;margin-bottom:3px}
+  .tabs{display:flex;gap:7px;flex-wrap:wrap;margin:6px 0 14px}
+  .tab{cursor:pointer;padding:7px 13px;border:1px solid var(--line);border-radius:9px;color:var(--dim);font-size:13px;background:var(--panel)}
+  .tab.active{color:#06121a;background:linear-gradient(100deg,var(--accent),var(--accent2));border-color:transparent;font-weight:600}
+  .subview{display:none}.subview.active{display:block}
+  .rqcat{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent2);margin-top:18px;margin-bottom:2px}
+  .rq{margin:10px 0;padding-bottom:10px;border-bottom:1px solid var(--line)}
+  .rq .qt{font-size:13.5px;margin-bottom:7px}
+  .rq .seg{display:flex;gap:5px}
+  .rq .seg button{flex:1;border:1px solid var(--line);background:var(--panel2);color:var(--dim);border-radius:8px;padding:9px 0;font-size:13px;cursor:pointer}
+  .rq .seg button.on{background:linear-gradient(100deg,var(--accent),var(--accent2));color:#06121a;border-color:transparent;font-weight:700}
+  .note{font-size:12.5px;color:var(--dim)}
+  .invite{background:rgba(192,139,255,.1);border:1px solid var(--accent2);border-radius:12px;padding:12px 14px;font-size:13.5px;margin-bottom:14px}
+  .sharebox input{width:100%;font-size:11.5px;margin-top:2px}
+  .pickchip{cursor:pointer;border:1px solid var(--line);background:var(--panel2);color:var(--dim);border-radius:999px;padding:8px 13px;font-size:13px;margin:5px 6px 0 0}
+  .pickchip.on{background:linear-gradient(100deg,var(--accent),var(--accent2));color:#06121a;border-color:transparent;font-weight:600}
+  .fcgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+  .fccard{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:center;cursor:pointer;transition:.12s}
+  .fccard:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .fccard.on{border-color:var(--accent2);background:linear-gradient(160deg,rgba(90,209,255,.12),rgba(192,139,255,.12))}
+  .fccard .em{font-size:26px}
+  .fccard .fcn{font-size:14px;font-weight:600;margin-top:4px}
+  .fcrank{position:absolute;top:8px;right:8px;width:22px;height:22px;border-radius:50%;background:linear-gradient(100deg,var(--accent),var(--accent2));color:#06121a;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center}
+  .md-most{border-color:var(--good)!important;background:linear-gradient(160deg,rgba(95,227,161,.16),transparent)!important}
+  .md-lock{opacity:.4;pointer-events:none}
+  .spikerow{display:grid;grid-template-columns:118px 1fr;align-items:center;gap:10px;margin:5px 0}
+  .spikerow .nm{font-size:13px}
+  .spikebar{position:relative;height:20px;background:var(--panel2);border-radius:6px;border:1px solid var(--line)}
+  .spikebar .mid{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--dim);opacity:.5}
+  .spikebar .fillpos{position:absolute;left:50%;top:0;bottom:0;background:var(--accent);border-radius:0 6px 6px 0}
+  .spikebar .fillneg{position:absolute;right:50%;top:0;bottom:0;background:#3a4560;border-radius:6px 0 0 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">◇ SUSPECTRUM</div>
+    <div style="display:flex;gap:7px">
+      <div class="navbtn" onclick="go('home')">Home</div>
+      <div class="navbtn" onclick="go('explore')">Explore</div>
+      <div class="navbtn" onclick="go('about')">About</div>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <section class="screen active" id="home">
+    <div class="hero">
+      <div id="inviteBanner"></div>
+      <div class="kicker">Neurodivergence, reframed as ability</div>
+      <h1>Find your powers.</h1>
+      <p class="lead">A playful, honest self-discovery tool for autistic, ADHD, and AuDHD minds. Answer a few questions, meet your power set, and learn how to use it, and who your squad is. Not a diagnosis. Just a mirror that assumes you were never broken.</p>
+      <div class="chips">
+        <span class="chip"><span class="dot" style="background:var(--autism)"></span>Autism-linked</span>
+        <span class="chip"><span class="dot" style="background:var(--adhd)"></span>ADHD-linked</span>
+        <span class="chip"><span class="dot" style="background:var(--shared)"></span>Shared / AuDHD</span>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:8px">
+        <button class="btn" onclick="startQuiz()">Take the test · ~4 min</button>
+        <button class="btn ghost" onclick="go('explore')">Just explore the powers</button>
+      </div>
+      <div class="warnbox" style="margin-top:22px">This is a prototype and a self-discovery tool, not a clinical assessment. It can't diagnose anything, and nothing you answer leaves your device. If your answers point to real distress, please reach out to someone you trust or a professional, you deserve support, not just a badge.</div>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="screen" id="quiz">
+    <div class="qcount" id="qCount">Question 1</div>
+    <div class="prog"><div id="progBar"></div></div>
+    <div class="qtext" id="qText"></div>
+    <div class="likert" id="likert"></div>
+    <div class="qnav">
+      <button class="btn ghost" id="backBtn" onclick="prevQ()">← Back</button>
+      <button class="btn ghost" onclick="go('home')">Exit</button>
+    </div>
+  </section>
+
+  <!-- FORCED CHOICE -->
+  <section class="screen" id="forced">
+    <div class="kicker">Sharpen it</div>
+    <h2>Which are most <em>you</em>?</h2>
+    <p class="lead">You scored high across a lot of these, which is real, and common for AuDHD minds. The quiz alone can't tell your signature strengths from your strong-but-background ones. You can. Pick your top three, in order.</p>
+    <div class="fcgrid" id="fcCards"></div>
+    <div style="display:flex;align-items:center;gap:12px;margin-top:16px">
+      <button class="btn" id="fcDone" onclick="finishForced()" disabled>See my result</button>
+      <span class="note" id="fcCount">0 / 3 chosen</span>
+    </div>
+  </section>
+
+  <!-- MAXDIFF (resolution) -->
+  <section class="screen" id="maxdiff">
+    <div class="kicker">Zoom in</div>
+    <h2 id="mdPrompt">Which is <strong>most</strong> you?</h2>
+    <p class="lead">You're strong across a lot of these, so let's find what's truly core. In each set, tap the one that's most you, then the one that's least. A few quick rounds.</p>
+    <div class="prog"><div id="mdProg"></div></div>
+    <div class="fcgrid" id="mdCards"></div>
+    <div class="note" style="margin-top:12px">Set <span id="mdCount"></span></div>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="screen" id="results">
+    <div class="primary">
+      <div class="em" id="rEm"></div>
+      <div class="kicker">Your primary power</div>
+      <h1 id="rName"></h1>
+      <div id="rBadge"></div>
+      <p class="lead" style="margin:10px auto 0" id="rLook"></p>
+      <div id="rSignature" style="margin-top:12px"></div>
+    </div>
+    <div id="dyadResult"></div>
+    <div id="wellbeingNote"></div>
+
+    <div class="panelbox" id="pShape">
+      <div class="lbl">Your strengths, strongest first</div>
+      <p style="color:var(--dim);font-size:13px;margin:4px 0 12px">Ranked after your zoom-in, most core to you first. The ★ is your primary. Answering broadly high is normal, the zoom-in round is what pulls them apart.</p>
+      <div class="constellation" id="rConstellation"></div>
+      <div id="rAcq" style="margin-top:12px"></div>
+    </div>
+
+    <div class="panelbox" id="pCombo" style="border-color:var(--accent2)">
+      <div class="lbl" style="color:var(--accent2)">Your combination · your real edge</div>
+      <div id="rCombo"></div>
+    </div>
+
+    <div class="panelbox" id="rProfileBox">
+      <div class="lbl">Screening indication</div>
+      <div id="rProfile"></div>
+    </div>
+
+    <div class="panelbox" id="pDetail">
+      <div class="lbl">Your profile in detail</div>
+      <p style="color:var(--dim);font-size:13px;margin:4px 0 10px">Each domain broken into its facets. Brighter bars are the ones driving your profile.</p>
+      <div id="rDetail"></div>
+    </div>
+
+    <div class="panelbox" id="rAudhdBox" style="display:none">
+      <div class="lbl">Your inner squad · the push and pull</div>
+      <div id="rAudhd"></div>
+    </div>
+
+    <div class="panelbox">
+      <div class="lbl">The masking read</div>
+      <div id="rMask"></div>
+    </div>
+
+    <div class="panelbox" id="pShineKry">
+      <div class="row">
+        <div class="col"><span class="lbl shine">Where it shines</span><p id="rShine" style="margin:5px 0 0"></p></div>
+        <div class="col"><span class="lbl kry">Your kryptonite</span><p id="rKry" style="margin:5px 0 0"></p></div>
+      </div>
+    </div>
+
+    <div class="panelbox" id="pWeak">
+      <div class="lbl">Strengths come with challenges</div>
+      <div id="rWeak" style="margin-top:6px"></div>
+    </div>
+
+    <div class="panelbox" id="pRecs">
+      <div class="lbl">Using your power</div>
+      <div class="recgrid" id="rRecs"></div>
+      <div id="tailoredNote" style="margin-top:10px"></div>
+    </div>
+
+    <div class="panelbox" id="pSquad">
+      <div class="lbl">Find your squad</div>
+      <div id="rSquad" style="margin-top:6px"></div>
+      <button class="btn ghost" style="margin-top:12px" onclick="go('explore');showSub('squad')">Open the squad builder →</button>
+    </div>
+
+    <!-- KEEP-YOUR-RESULT panel. The research data-collection block (context questions, research
+         battery, consent, submit) was removed 2026-08 at the maker's request, until consent +
+         ethics governance are ready. To re-enable, restore the opt-in block from the earlier build
+         (the prior zip) and set RESEARCH_ENDPOINT above to your Apps Script /exec URL. -->
+    <div class="panelbox" style="border-color:var(--accent2)">
+      <div class="lbl" style="color:var(--accent2)">Keep your result</div>
+      <p style="color:var(--dim);font-size:13.5px;margin:6px 0 10px">Nothing here is collected or sent anywhere, your answers stay in your browser. If you want to keep your result or share it yourself, you can download it as a file.</p>
+      <button class="btn ghost" onclick="downloadResult()">⬇ Download my result (JSON)</button>
+    </div>
+
+    <div class="panelbox" id="deepCta">
+      <div class="lbl">Want a sharper read?</div>
+      <p style="color:var(--dim);font-size:13.5px;margin:6px 0 10px">This quick result rests on one question per power. Answer a few more and it gets a lot more accurate, and the advice gets tailored to where you actually struggle.</p>
+      <button class="btn" onclick="startDeep()">Go deeper (~6 min)</button>
+    </div>
+
+    <div class="panelbox" style="border-color:var(--accent)">
+      <div class="lbl" style="color:var(--accent)">Find your squad</div>
+      <p style="color:var(--dim);font-size:13.5px;margin:6px 0 10px">Compare with a friend or coworker. They take the test, and you both see how your powers fit, synergy or friction. Only your power scores travel in the link, no names.</p>
+      <div id="shareArea"></div>
+      <button class="btn ghost" onclick="makeShareLink()">Create my compare link</button>
+    </div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px">
+      <button class="btn" onclick="startQuiz()">Retake</button>
+      <button class="btn ghost" onclick="go('explore')">Explore all powers</button>
+    </div>
+  </section>
+
+  <!-- DEEP -->
+  <section class="screen" id="deep">
+    <h2>Go deeper</h2>
+    <p class="lead">A few more questions so your profile is accurate rather than a quick sketch. Rate each from 1 (strongly disagree) to 5 (strongly agree), and skip any that don't fit.</p>
+    <div class="panelbox"><div class="lbl">Sharpen your profile</div><p class="note" style="margin:4px 0 8px">More on the autism and ADHD facets, to refine your profile.</p><div id="deepDiff"></div></div>
+    <div class="panelbox"><div class="lbl">More about how you work</div><div id="deepPowers"></div></div>
+    <div class="panelbox"><div class="lbl">How you're doing right now</div><p class="note" style="margin:4px 0 8px">Optional, only so the result can meet you where you are.</p><div id="deepWellbeing"></div></div>
+    <div class="panelbox"><div class="lbl">Your world</div>
+      <p class="note" style="margin:4px 0 6px">Where do you find things hardest right now? (tap any)</p>
+      <div id="deepSettings"></div>
+      <label class="fld" style="margin-top:12px">What would help you most?</label>
+      <select id="deepGoal"><option value="">No preference</option></select>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" onclick="submitDeep()">See my sharper result</button>
+      <button class="btn ghost" onclick="go('results')">Back</button>
+    </div>
+  </section>
+
+  <!-- EXPLORE -->
+  <section class="screen" id="explore">
+    <h2>Explore Suspectrum</h2>
+    <div class="tabs">
+      <div class="tab active" onclick="showSub('powers')">The powers</div>
+      <div class="tab" onclick="showSub('squad')">Squad builder</div>
+      <div class="tab" onclick="showSub('masking')">Masking layer</div>
+    </div>
+
+    <div class="subview active" id="sub-powers">
+      <p class="lead">Every power is anchored to a real trait construct and color-tagged by origin. Tap any card.</p>
+      <div class="grid" id="powerGrid"></div>
+    </div>
+
+    <div class="subview" id="sub-squad">
+      <p class="lead">Mix two powers to see synergy (superhero squad) or friction (a pair that needs scaffolding). Built for friendship and coworking. "Villain" means a combo that needs a shared protocol, never a bad person.</p>
+      <div class="row">
+        <div class="col"><label class="fld">Power A</label><select id="selA"></select></div>
+        <div class="col"><label class="fld">Power B</label><select id="selB"></select></div>
+      </div>
+      <div id="squadOut"></div>
+    </div>
+
+    <div class="subview" id="sub-masking">
+      <p class="lead">Why a naive test fails high-masking people, and gets it worst for those already least recognized. Drag the mask.</p>
+      <div class="panelbox">
+        <label style="font-size:13px;color:var(--dim)">Masking load: <strong id="mv">50%</strong></label>
+        <input type="range" id="maskSlider" min="0" max="100" value="50">
+        <div style="margin-top:12px"><div style="font-size:12px;color:var(--dim)">True underlying power (constant)</div>
+          <div class="bar"><span id="trueTxt">80</span><div id="trueBar" style="width:80%;background:linear-gradient(90deg,var(--accent2),var(--accent))"></div></div></div>
+        <div style="margin-top:9px"><div style="font-size:12px;color:var(--dim)">What a naive surface test reads</div>
+          <div class="bar"><span id="surfTxt">40</span><div id="surfBar" style="width:40%;background:linear-gradient(90deg,#3a4560,var(--warn))"></div></div></div>
+        <div class="verdict" id="maskVerdict" style="border-color:var(--accent)"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="screen" id="about">
+    <h2>About Suspectrum</h2>
+    <p style="font-size:13px;color:var(--dim);margin:0 0 12px;border-left:2px solid var(--accent2);padding-left:10px">The name is a wink at <em>suspectrum</em> — the uncanny way neurodivergent people spot their own. Recognizing each other is half the point, which is why the squad and compare features exist.</p>
+    <p class="lead">Suspectrum treats autism, ADHD, and their combination as natural variation, real strengths bundled with real costs in a world not built for them. A trait is disabling in one environment and a superpower in another, which is the whole point.</p>
+    <div class="panelbox">
+      <div class="lbl">Three honest commitments</div>
+      <p style="font-size:14px"><strong>1. Trauma reveals, it doesn't create.</strong> Autism and ADHD are present from early development. Crisis and burnout often strip the mask and make traits visible, which is why so many people find out late. The power was always there.</p>
+      <p style="font-size:14px"><strong>2. Sliders, not a sorting hat.</strong> These powers are dimensional and shift with sleep, stress, and setting. You're a constellation, not a fixed type.</p>
+      <p style="font-size:14px"><strong>3. It affirms, it doesn't diagnose.</strong> This is a mirror, not a medical tool, and it points toward real support when that's what's needed.</p>
+    </div>
+    <div class="panelbox">
+      <div class="lbl">The culturally-fair goal</div>
+      <p style="font-size:14px">Existing tools were normed on a narrow slice of people and misread everyone else. Autism is under-referred in ethnic minorities, ADOS ratings shift with race and gender, and Black and Hispanic kids get read as "defiant" instead of ADHD. People from marginalized communities often mask earlier and harder to meet family and community expectations, which makes a surface test read their powers as weakest. Correcting that, technically, by testing for differential item functioning, is the real work.</p>
+    </div>
+    <p style="font-size:12.5px;color:var(--dim)">Prototype v0.3. Not a diagnostic instrument. Not a substitute for professional assessment.</p>
+  </section>
+
+  <div class="foot" id="footNote">Prototype · your answers stay on your device · this is not a diagnosis</div>
+</div>
+
+<!-- MODAL -->
+<div class="modal" id="modal">
+  <div class="card">
+    <span class="x" onclick="closeModal()">✕</span>
+    <div class="em" id="mEm" style="font-size:44px"></div>
+    <h2 id="mName" style="margin:4px 0 0"></h2>
+    <span class="pill" id="mAn"></span><span class="pill" id="mCon"></span><span class="pill" id="mOrig"></span>
+    <div class="kv"><span class="lbl">What it looks like</span><span id="mLook"></span></div>
+    <div class="kv"><span class="lbl shine">Where it shines</span><span id="mShine"></span></div>
+    <div class="kv"><span class="lbl kry">Kryptonite</span><span id="mKry"></span></div>
+  </div>
+</div>
+
+<script>
+/* ============ DATA ============ */
+const ORIGIN={autism:{label:"Autism-linked",color:"var(--autism)"},adhd:{label:"ADHD-linked",color:"var(--adhd)"},shared:{label:"Shared / AuDHD",color:"var(--shared)"}};
+const POWERS=[
+ {id:"diver",em:"🐋",name:"The Deep Diver",an:"Sperm whale",con:"Monotropism · hyperfocus",origin:"shared",role:"depth",
+  look:"You submerge into one problem for hours and surface with something no distractible mind could reach.",
+  shine:"Research, engineering, craft, debugging, anything with a deep floor.",
+  kry:"The surface. Transitions, being pulled out mid-dive, and losing whole afternoons to the wrong reef.",
+  rec:{social:"Tell friends a dive isn't rejection, agree a signal for 'I'm deep, back soon.'",work:"Guard uninterrupted blocks and batch your meetings; your best work needs a deep floor.",family:"Warn people before a dive and set a surfacing time so plans don't quietly get dropped."}},
+ {id:"oracle",em:"🐦‍⬛",name:"The Oracle",an:"Raven",con:"Pattern recognition · systemizing",origin:"autism",role:"finisher",
+  look:"You see the structure under the noise, the repeated shape, the thing that's subtly off.",
+  shine:"Analysis, QA, security, diagnosis, forecasting, anywhere the signal is buried.",
+  kry:"Seeing patterns that aren't there, and not being able to switch the engine off when something is just fine.",
+  rec:{social:"Not every off-pattern needs flagging out loud, pick the ones that matter.",work:"Aim the radar at analysis, QA, or review roles where it's pure gift.",family:"Say 'I noticed X' as an offer, not a verdict, people hear correction as criticism."}},
+ {id:"spark",em:"🐦",name:"The Spark",an:"Hummingbird",con:"Divergent ideation · novelty-seeking",origin:"adhd",role:"generator",
+  look:"Ideas arrive faster than you can act on them, and you connect things nobody else put together.",
+  shine:"Early-stage creative work, brainstorming, entrepreneurship.",
+  kry:"Follow-through, the graveyard of half-built projects, and boredom the moment a thing stops being new.",
+  rec:{social:"Let friends know a dropped idea isn't a dropped person, you're just onto the next.",work:"Pair with a finisher and capture ideas in one place so follow-through has a home.",family:"Externalize commitments, a shared calendar or reminders, so plans survive the next shiny thing."}},
+ {id:"sentinel",em:"🦡",name:"The Sentinel",an:"Honey badger",con:"Justice sensitivity · moral clarity",origin:"autism",role:"guard",
+  look:"Unfairness and hypocrisy set off a loud internal alarm, even when it isn't aimed at you.",
+  shine:"Advocacy, ethics, integrity roles, protecting a team.",
+  kry:"No volume knob, so small injustices and large ones can feel the same, which is exhausting.",
+  rec:{social:"Choose your hills, save the alarm for the injustices that matter or you'll burn out.",work:"Channel it into ethics, safety, or advocacy roles where fairness is literally the job.",family:"Name the feeling ('this feels unfair to me') rather than prosecuting the whole case."}},
+ {id:"antenna",em:"🐈",name:"The Antenna",an:"Cat",con:"Sensory sensitivity · perception",origin:"autism",role:"perception",
+  look:"You register the flickering light, the background hum, the shift in a tone that others miss.",
+  shine:"Design, care work, music, quality, safety, reading a situation early.",
+  kry:"Overload. You can't easily turn down the gain, so a loud bright day can end the shift early.",
+  rec:{social:"It's fine to pick low-stimulation venues, suggest the quiet café.",work:"Ask for sensory adjustments, headphones and lighting and a quieter desk aren't luxuries.",family:"Explain overload isn't moodiness, and agree an exit plan for loud gatherings."}},
+ {id:"empath",em:"🐘",name:"The Empath",an:"Elephant",con:"Affective attunement · hyper-empathy",origin:"shared",role:"buffer",
+  look:"You feel other people's states with high fidelity, sometimes more than is comfortable.",
+  shine:"Support, mediation, teaching, any bond that runs on being genuinely felt.",
+  kry:"Absorbing feeling that isn't yours to carry, with no natural filter between their storm and your weather.",
+  rec:{social:"Practice setting down a feeling that isn't yours to carry.",work:"You're gold in support and mediation, but guard against absorbing the whole team's stress.",family:"Boundaries are not coldness, you can care deeply without carrying everything."}},
+ {id:"fire",em:"🐕",name:"The Firefighter",an:"Border collie",con:"Crisis-state clarity",origin:"adhd",role:"pace",
+  look:"You come alive when the stakes are real and the clock is loud, and think clearest in the emergency.",
+  shine:"ER-type work, incident response, deadlines, live events.",
+  kry:"The calm week, and a nervous system that sometimes manufactures urgency because flat times feel worse.",
+  rec:{social:"Notice if you're manufacturing drama to feel switched-on, calm can be safe too.",work:"Seek roles with real stakes, incident response, live events, genuine deadlines.",family:"Build gentle structure for the calm weeks so flat times don't feel like failure."}},
+ {id:"truth",em:"🦫",name:"The Truth-teller",an:"Meerkat",con:"Bottom-up · low-guile communication",origin:"autism",role:"generator",
+  look:"You say the plain, honest thing directly, without the social lacquer most people apply automatically.",
+  shine:"Feedback cultures, science, clarity-over-charm negotiation, naming the elephant.",
+  kry:"Rooms that run on lacquer, where the plain truth reads as an attack even when it was a gift.",
+  rec:{social:"Add a warmth layer, 'I care about you, and here's the honest bit.'",work:"You thrive in feedback cultures, ask if people want the direct version first.",family:"Timing and softening aren't dishonesty, they help the truth actually land."}},
+ {id:"archivist",em:"🦉",name:"The Archivist",an:"Owl / corvid",con:"Deep special interests · niche mastery",origin:"autism",role:"finisher",
+  look:"You've built encyclopedic command of a topic far past what the job required, because the interest pulled.",
+  shine:"Expertise roles, knowledge work, teaching, the deep bench a team leans on.",
+  kry:"Depth on things nobody's paying for, and difficulty caring on command about a domain that doesn't spark.",
+  rec:{social:"Share the passion in doses, and ask about theirs too.",work:"Become the team's deep bench, your niche mastery is real, bankable value.",family:"Let people opt in to the deep dive rather than receiving the full download."}},
+ {id:"dynamo",em:"🐆",name:"The Dynamo",an:"Cheetah",con:"Kinetic drive · hyperactivity",origin:"adhd",role:"pace",
+  look:"You carry a surplus of physical and mental energy and find it genuinely hard to sit still.",
+  shine:"Startups, sports, sales, anything with a fast metabolism.",
+  kry:"Stillness, the meeting that won't end, and a body that needs to move before the room agrees to a break.",
+  rec:{social:"Suggest active hangouts, walks or sport, where your energy is a plus.",work:"Build in movement, standing desks and walking calls and fast-metabolism roles.",family:"Signal when you need to move so it doesn't read as restlessness or disinterest."}},
+ {id:"weaver",em:"🕸️",name:"The Weaver",an:"Spider",con:"Associative · nonlinear cognition",origin:"shared",role:"generator",
+  look:"Your mind jumps between distant subjects and solves problems by connecting unrelated fields.",
+  shine:"Interdisciplinary work, strategy, invention, translation between fields.",
+  kry:"Linearity, the demand to show your work in a straight line when your mind arrived by a web.",
+  rec:{social:"Not everyone follows the web, offer the short version first, then the links.",work:"Interdisciplinary and strategy roles reward exactly the connections you see.",family:"Show one thread at a time when explaining, even though you arrived by the whole web."}}
+];
+const P=id=>POWERS.find(p=>p.id===id);
+
+/* Quiz items: one per power + AuDHD push-pull + masking */
+const FACETS={
+ A1:{d:'aut',label:'Social communication',desc:'reading cues, small talk, conversational back-and-forth'},
+ A2:{d:'aut',label:'Sensory sensitivity',desc:'over- or under-responsive to sound, light, texture, movement'},
+ A3:{d:'aut',label:'Need for sameness',desc:'routine, predictability, distress at unexpected change'},
+ A4:{d:'aut',label:'Deep focus & interests',desc:'monotropism, intense interests, hard to switch away'},
+ A5:{d:'aut',label:'Literal & detail thinking',desc:'literal reading, detail-first, need for explicit rules'},
+ H1:{d:'adhd',label:'Inattention',desc:'attention slips, distractible, careless slips'},
+ H2:{d:'adhd',label:'Hyperactivity',desc:'restless, fidgety, hard to sit still'},
+ H3:{d:'adhd',label:'Impulsivity',desc:'interrupting, blurting, acting before thinking'},
+ H4:{d:'adhd',label:'Executive & time',desc:'task initiation, time-blindness, disorganization'},
+ H5:{d:'adhd',label:'Emotional intensity',desc:'fast strong emotions, rejection sensitivity'}
+};
+const ITEMS=[
+ // Autism facets — agreement, direction-scored (2 items per facet)
+ {t:"In conversations I often miss hints, or have to consciously work out what someone really means.",k:"aut",facet:"A1",scale:"AG5",dir:"agree"},
+ {t:"Small talk and reading a room come naturally to me.",k:"aut",facet:"A1",scale:"AG5",dir:"disagree"},
+ {t:"Everyday sensory things, lights, sounds, textures, clothing tags, crowds, can be physically overwhelming.",k:"aut",facet:"A2",scale:"AG5",dir:"agree"},
+ {t:"I strongly seek out or need certain sensations, movement, deep pressure, specific sounds or textures.",k:"aut",facet:"A2",scale:"AG5",dir:"agree"},
+ {t:"Unexpected changes to my plans or routine genuinely distress me, not just annoy me.",k:"aut",facet:"A3",scale:"AG5",dir:"agree"},
+ {t:"I rely on routines or rituals, and feel off when I can't follow them.",k:"aut",facet:"A3",scale:"AG5",dir:"agree"},
+ {t:"When I'm absorbed in an interest I go very deep, and it's genuinely hard to pull out or switch tasks.",k:"aut",facet:"A4",scale:"AG5",dir:"agree"},
+ {t:"I have intense, focused interests I can study or talk about for hours.",k:"aut",facet:"A4",scale:"AG5",dir:"agree"},
+ {t:"I take things literally, or miss sarcasm and subtext that others pick up easily.",k:"aut",facet:"A5",scale:"AG5",dir:"agree"},
+ {t:"I prefer clear, explicit rules, and get frustrated by vague or unwritten expectations.",k:"aut",facet:"A5",scale:"AG5",dir:"agree"},
+ // ADHD facets — frequency (2 items per facet)
+ {t:"Even on things I genuinely want to do, my attention slips away before I finish.",k:"adhd",facet:"H1",scale:"FREQ5"},
+ {t:"I get pulled off-task by a noise, a thought, or whatever's in front of me.",k:"adhd",facet:"H1",scale:"FREQ5"},
+ {t:"I feel physically restless or fidgety, like I can't switch off.",k:"adhd",facet:"H2",scale:"FREQ5"},
+ {t:"Sitting still through long meetings or meals is genuinely uncomfortable for me.",k:"adhd",facet:"H2",scale:"FREQ5"},
+ {t:"I interrupt people or blurt things out before I can stop myself.",k:"adhd",facet:"H3",scale:"FREQ5"},
+ {t:"I act or decide on impulse, then deal with the consequences later.",k:"adhd",facet:"H3",scale:"FREQ5"},
+ {t:"I put off starting effortful tasks, even important ones, until the last minute.",k:"adhd",facet:"H4",scale:"FREQ5"},
+ {t:"I lose track of time, or badly misjudge how long things will take.",k:"adhd",facet:"H4",scale:"FREQ5"},
+ {t:"Small frustrations or criticisms hit me hard and fast, and take a while to pass.",k:"adhd",facet:"H5",scale:"FREQ5"},
+ {t:"My emotions can go from zero to intense very quickly.",k:"adhd",facet:"H5",scale:"FREQ5"},
+ // Powers — strengths, agreement
+ {t:"When something grabs my interest, I can lose hours and forget to eat or check my phone.",k:"power",power:"diver",scale:"AG5"},
+ {t:"My best work happens in long, uninterrupted stretches on one thing.",k:"power",power:"diver",scale:"AG5"},
+ {t:"I spot patterns, errors, or things that are subtly 'off' that other people walk right past.",k:"power",power:"oracle",scale:"AG5"},
+ {t:"I notice inconsistencies in systems, arguments, or data before others do.",k:"power",power:"oracle",scale:"AG5"},
+ {t:"Ideas arrive faster than I can act on them, and I connect things nobody else put together.",k:"power",power:"spark",scale:"AG5"},
+ {t:"I generate lots of possibilities quickly when a problem is open-ended.",k:"power",power:"spark",scale:"AG5"},
+ {t:"Unfairness or hypocrisy bothers me intensely, even when it isn't affecting me directly.",k:"power",power:"sentinel",scale:"AG5"},
+ {t:"I feel compelled to speak up when something is wrong, even at a personal cost.",k:"power",power:"sentinel",scale:"AG5"},
+ {t:"I notice small sensory things, a flicker, a hum, a shift in tone, that others don't register.",k:"power",power:"antenna",scale:"AG5"},
+ {t:"I pick up subtle changes in a room or someone's mood quickly.",k:"power",power:"antenna",scale:"AG5"},
+ {t:"I pick up how others feel so strongly it's sometimes hard to tell their feelings from mine.",k:"power",power:"empath",scale:"AG5"},
+ {t:"I absorb the emotional atmosphere of a room, for better or worse.",k:"power",power:"empath",scale:"AG5"},
+ {t:"I do some of my clearest thinking in a crisis or right up against a deadline.",k:"power",power:"fire",scale:"AG5"},
+ {t:"In an emergency I get calm and clear while others panic.",k:"power",power:"fire",scale:"AG5"},
+ {t:"I tend to say the plain, honest thing directly, even when others would soften or avoid it.",k:"power",power:"truth",scale:"AG5"},
+ {t:"People sometimes read me as blunt when I'm just being clear.",k:"power",power:"truth",scale:"AG5"},
+ {t:"I've built deep, encyclopedic knowledge about a topic just because it fascinated me.",k:"power",power:"archivist",scale:"AG5"},
+ {t:"I can recall detailed information about the things I care about.",k:"power",power:"archivist",scale:"AG5"},
+ {t:"I have a lot of energy and find it genuinely hard to sit still for long.",k:"power",power:"dynamo",scale:"AG5"},
+ {t:"I bring a fast pace and drive to what I do.",k:"power",power:"dynamo",scale:"AG5"},
+ {t:"My mind jumps between distant subjects, and I solve problems by linking unrelated fields.",k:"power",power:"weaver",scale:"AG5"},
+ {t:"I connect ideas from areas most people keep separate.",k:"power",power:"weaver",scale:"AG5"},
+ // Masking — agreement
+ {t:"In social situations I closely monitor and adjust my behavior to seem 'normal' or fit in.",k:"mask",scale:"AG5"},
+ {t:"I've practiced or copied expressions, gestures, or scripts to get through social interactions.",k:"mask",scale:"AG5"},
+ {t:"After socializing I often feel exhausted from the effort of holding it all together.",k:"mask",scale:"AG5"},
+ {t:"Growing up, I felt pressure from family, culture, or community to hide the ways I'm different.",k:"mask",scale:"AG5"}
+];
+const SCALES={AG5:["Strongly disagree","Disagree","Neutral","Agree","Strongly agree"],FREQ5:["Never","Rarely","Sometimes","Often","Very often"]};
+// Deeper-tier precision items — 2 more per facet, sharpen the facet scores in the deep profile
+const DIFF_DEEP=[
+ {t:"I've been told I'm hard to read, or that I come across as blunt or overly formal.",k:"aut",facet:"A1",dir:"agree"},
+ {t:"Keeping the back-and-forth of a conversation going takes conscious effort for me.",k:"aut",facet:"A1",dir:"agree"},
+ {t:"Background noise others tune out, a hum, a flicker, can be impossible for me to ignore.",k:"aut",facet:"A2",dir:"agree"},
+ {t:"Certain clothing, food textures, or smells are genuinely intolerable to me.",k:"aut",facet:"A2",dir:"agree"},
+ {t:"I like things done a particular way, and it bothers me when they're not.",k:"aut",facet:"A3",dir:"agree"},
+ {t:"I strongly prefer to know exactly what's going to happen in advance.",k:"aut",facet:"A3",dir:"agree"},
+ {t:"Being interrupted or forced to switch tasks when I'm focused is genuinely painful.",k:"aut",facet:"A4",dir:"agree"},
+ {t:"I'd rather go deep on one thing than sample many.",k:"aut",facet:"A4",dir:"agree"},
+ {t:"I notice small details or errors that most people walk straight past.",k:"aut",facet:"A5",dir:"agree"},
+ {t:"'Use your judgment' stresses me, I want the instructions spelled out.",k:"aut",facet:"A5",dir:"agree"},
+ {t:"I make careless mistakes or miss details when something bores me.",k:"adhd",facet:"H1"},
+ {t:"I lose or misplace things I need, keys, phone, wallet.",k:"adhd",facet:"H1"},
+ {t:"I'm often on the go, or feel driven by a motor.",k:"adhd",facet:"H2"},
+ {t:"I talk a lot, or feel a constant urge to keep moving or doing.",k:"adhd",facet:"H2"},
+ {t:"I make impulsive purchases, commitments, or decisions I later rethink.",k:"adhd",facet:"H3"},
+ {t:"I find it hard to wait my turn or hold back a reaction.",k:"adhd",facet:"H3"},
+ {t:"I struggle to break big tasks into steps and get started.",k:"adhd",facet:"H4"},
+ {t:"My space, files, or inbox get chaotic no matter how hard I try.",k:"adhd",facet:"H4"},
+ {t:"Perceived rejection or criticism can feel crushing, even when it's minor.",k:"adhd",facet:"H5"},
+ {t:"I struggle to calm down once I'm upset or wound up.",k:"adhd",facet:"H5"}
+];
+let diffDeepAnswers={};
+function diffIntensity(it,v){return it.k==='aut'?(it.dir==='agree'?norm(v):100-norm(v)):norm(v);}
+function computeFacets(includeDeep){
+  const acc={};Object.keys(FACETS).forEach(f=>acc[f]={s:0,n:0});
+  ITEMS.forEach((it,i)=>{if(it.facet){acc[it.facet].s+=diffIntensity(it,val(i));acc[it.facet].n++;}});
+  if(includeDeep)DIFF_DEEP.forEach((it,j)=>{if(diffDeepAnswers[j]!=null){acc[it.facet].s+=diffIntensity(it,diffDeepAnswers[j]);acc[it.facet].n++;}});
+  const out={};Object.keys(acc).forEach(f=>out[f]=acc[f].n?Math.round(acc[f].s/acc[f].n):0);
+  return out;
+}
+function facetProfile(facets){
+  const autF=['A1','A2','A3','A4','A5'],adhdF=['H1','H2','H3','H4','H5'];
+  const mean=fs=>Math.round(fs.reduce((a,f)=>a+facets[f],0)/fs.length);
+  const autScore=mean(autF),adhdScore=mean(adhdF);
+  const thr=55,someLo=42;
+  const autPos=autScore>=thr,adhdPos=adhdScore>=thr,ndPositive=autPos||adhdPos;
+  let type;
+  if(autPos&&adhdPos)type='AuDHD';
+  else if(autPos)type='Autistic-leaning';
+  else if(adhdPos)type='ADHD-leaning';
+  else if(autScore>=someLo||adhdScore>=someLo)type='Some traits';
+  else type='Not strongly indicated';
+  const inatt=Math.round((facets.H1+facets.H4)/2),hi=Math.round((facets.H2+facets.H3)/2);
+  let adhdPresentation=null;
+  if(adhdPos)adhdPresentation=(inatt-hi>=12)?'Predominantly inattentive':((hi-inatt>=12)?'Predominantly hyperactive-impulsive':'Combined');
+  const autism_emphasis=autF.filter(f=>facets[f]>=55).sort((a,b)=>facets[b]-facets[a]).map(f=>FACETS[f].label);
+  return {facets,autScore,adhdScore,autThresh:thr,autPos,adhdPos,ndPositive,type,adhdPresentation,autism_emphasis};
+}
+
+/* ============ STATE ============ */
+let qi=0;
+let answers=new Array(ITEMS.length).fill(null);
+let lastResult=null;
+
+/* ============ NAV ============ */
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({top:0});
+}
+function showSub(name){
+  document.querySelectorAll('#explore .tab').forEach((t,i)=>t.classList.toggle('active',t.getAttribute('onclick').includes(name)));
+  document.querySelectorAll('.subview').forEach(v=>v.classList.remove('active'));
+  document.getElementById('sub-'+name).classList.add('active');
+}
+
+/* ============ QUIZ ============ */
+function startQuiz(){qi=0;answers=new Array(ITEMS.length).fill(null);go('quiz');renderQ();}
+function renderQ(){
+  const it=ITEMS[qi];
+  const opts=SCALES[it.scale]||SCALES.AG5;
+  document.getElementById('qCount').textContent=`Question ${qi+1} of ${ITEMS.length}`;
+  document.getElementById('progBar').style.width=((qi)/(ITEMS.length))*100+'%';
+  document.getElementById('qText').textContent=it.t;
+  const box=document.getElementById('likert');box.innerHTML='';
+  opts.forEach((lab,i)=>{
+    const b=document.createElement('button');b.className='lk'+(answers[qi]===i+1?' sel':'');
+    b.textContent=lab;b.onclick=()=>answer(i+1);box.appendChild(b);
+  });
+  document.getElementById('backBtn').style.visibility=qi===0?'hidden':'visible';
+}
+function answer(v){
+  answers[qi]=v;
+  if(qi<ITEMS.length-1){qi++;setTimeout(renderQ,140);}
+  else{document.getElementById('progBar').style.width='100%';setTimeout(computeResult,160);}
+}
+function prevQ(){if(qi>0){qi--;renderQ();}}
+
+/* ============ SCORING ============ */
+function val(i){return answers[i]==null?3:answers[i];}      // default neutral
+function norm(v){return Math.round((v-1)/4*100);}           // 1..5 -> 0..100
+function computeResult(){
+  const s=computeScores();
+  const ranked=[...POWERS].map(p=>p.id).sort((a,b)=>s.scores[b]-s.scores[a]);
+  const vals=POWERS.map(p=>s.scores[p.id]);const mean=Math.round(vals.reduce((a,v)=>a+v,0)/vals.length);
+  const rel={};POWERS.forEach(p=>rel[p.id]=s.scores[p.id]-mean);
+  lastResult={likertPowers:s.scores,powers:s.scores,raw:s.scores,ranked,signature:ranked.slice(0,3),rel,selfMean:mean,
+    type:s.type,ndPositive:s.ndPositive,autPos:s.autPos,adhdPos:s.adhdPos,autScore:s.autScore,adhdScore:s.adhdScore,autThresh:s.autThresh,
+    facets:s.facets,adhdPresentation:s.adhdPresentation,autism_emphasis:s.autism_emphasis,
+    mask:s.mask,mode:'quick',wellbeing:null,goals:{settings:[],goal:''},ts:new Date().toISOString()};
+  if(s.ndPositive){startMaxdiff();}   // resolution round to break ceiling ties
+  else{renderResult();go('results');}
+}
+/* ============ MAXDIFF (best-worst) resolution ============ */
+const BLURBS={
+ diver:"I get lost in one thing for hours",
+ oracle:"I spot patterns and errors others miss",
+ spark:"Ideas pour out of me, fast",
+ sentinel:"Unfairness really gets to me",
+ antenna:"I pick up tiny things others don't",
+ empath:"I feel other people's emotions strongly",
+ fire:"I'm sharpest under pressure or in a crisis",
+ truth:"I say the blunt, honest thing",
+ archivist:"I go incredibly deep on my interests",
+ dynamo:"I've got restless energy and drive",
+ weaver:"I connect ideas from everywhere"
+};
+const MAXDIFF_SETS=[
+ ["diver","oracle","spark","sentinel"],
+ ["antenna","empath","fire","truth"],
+ ["archivist","dynamo","weaver","spark"],
+ ["diver","antenna","archivist","empath"],
+ ["oracle","fire","dynamo","sentinel"],
+ ["truth","weaver","empath","fire"]
+];
+let mdi=0, mdPhase='most', mdBest={}, mdWorst={};
+function startMaxdiff(){mdi=0;mdPhase='most';mdBest={};mdWorst={};go('maxdiff');renderMaxdiff();}
+function renderMaxdiff(){
+  const set=MAXDIFF_SETS[mdi];
+  document.getElementById('mdCount').textContent=`${mdi+1} / ${MAXDIFF_SETS.length}`;
+  document.getElementById('mdProg').style.width=(((mdi+(mdPhase==='least'?0.5:0))/MAXDIFF_SETS.length)*100)+'%';
+  document.getElementById('mdPrompt').innerHTML=mdPhase==='most'?'Which is <strong>most</strong> you?':'And which is <strong>least</strong> you?';
+  const box=document.getElementById('mdCards');box.innerHTML='';
+  set.forEach(id=>{const p=P(id);const isBest=mdBest[mdi]===id,lock=(mdPhase==='least'&&isBest);
+    const d=document.createElement('div');d.className='fccard'+(isBest?' md-most':'')+(lock?' md-lock':'');
+    d.innerHTML=`<div class="em">${p.em}</div><div class="fcn">${p.name}</div><div style="margin-top:5px;font-size:12.5px;color:var(--dim);line-height:1.35">${BLURBS[id]||p.con}</div>`;
+    if(!lock)d.onclick=()=>pickMd(id);
+    box.appendChild(d);});
+}
+function pickMd(id){
+  if(mdPhase==='most'){mdBest[mdi]=id;mdPhase='least';renderMaxdiff();}
+  else{ if(id===mdBest[mdi])return; mdWorst[mdi]=id;
+    if(mdi<MAXDIFF_SETS.length-1){mdi++;mdPhase='most';renderMaxdiff();}
+    else{finalizeMaxdiff();} }
+}
+function finalizeMaxdiff(){
+  const md={};POWERS.forEach(p=>md[p.id]=0);
+  Object.keys(mdBest).forEach(k=>md[mdBest[k]]++);
+  Object.keys(mdWorst).forEach(k=>md[mdWorst[k]]--);
+  applyMaxdiff(md);
+  go('results');renderResult();
+}
+function applyMaxdiff(md){
+  lastResult.md=md;
+  const likert=lastResult.likertPowers||lastResult.powers;
+  const mds=POWERS.map(p=>md[p.id]);const minMd=Math.min(...mds),maxMd=Math.max(...mds);
+  const scores={};
+  POWERS.forEach(p=>{const l=likert[p.id];const mdN=maxMd>minMd?((md[p.id]-minMd)/(maxMd-minMd)*100):50;
+    scores[p.id]=Math.round(0.6*l+0.4*mdN);});
+  const ranked=[...POWERS].map(p=>p.id).sort((a,b)=>scores[b]-scores[a]||(md[b]-md[a]));
+  const vals=POWERS.map(p=>scores[p.id]);const mean=Math.round(vals.reduce((a,v)=>a+v,0)/vals.length);
+  const rel={};POWERS.forEach(p=>rel[p.id]=scores[p.id]-mean);
+  lastResult.powers=scores;lastResult.raw=scores;lastResult.ranked=ranked;lastResult.signature=ranked.slice(0,3);lastResult.rel=rel;lastResult.selfMean=mean;
+}
+function computeScores(){
+  const prof=facetProfile(computeFacets(false));
+  const scores={};
+  POWERS.forEach(p=>{let vs=[];ITEMS.forEach((it,i)=>{if(it.k==='power'&&it.power===p.id)vs.push(norm(val(i)));});scores[p.id]=vs.length?Math.round(vs.reduce((a,x)=>a+x,0)/vs.length):50;});
+  const maskIdx=[];ITEMS.forEach((it,i)=>{if(it.k==='mask')maskIdx.push(i);});
+  const mask=Math.round(maskIdx.reduce((a,i)=>a+norm(val(i)),0)/maskIdx.length);
+  return Object.assign({},prof,{scores,mask});
+}
+
+/* ============ RESULT RENDER ============ */
+const TYPE_CHALLENGES={
+ 'Autistic-leaning':["Sensory overload in busy, bright, or loud places","Transitions and sudden changes of plan","Exhaustion from masking and social effort","Being misread as blunt, cold, or aloof","Executive function on tasks that don't grip you"],
+ 'ADHD-leaning':["Following through and finishing what you start","Time-blindness, lateness, and deadlines","Distraction and losing track of tasks","Emotional intensity and rejection sensitivity","Boredom and restlessness with routine"],
+ 'AuDHD':["The push-pull of needing routine AND novelty at once","Inconsistent capacity, some days on, some off","Burnout from the internal tug-of-war","Being harder to accommodate because your needs can conflict","Carrying two kinds of masking at once"]
+};
+const AUDHD_TEXT=`
+  <p style="margin:6px 0">The classic AuDHD experience is <strong>one foot on the gas, one on the brake</strong>. Your traits don't just interact with other people, they argue <em>inside you</em>. That's not inconsistency, it's two real systems with different needs sharing one nervous system.</p>
+  <ul style="color:var(--dim);font-size:13.5px;padding-left:18px">
+    <li><strong>Novelty vs routine:</strong> build routines with variety built in, same structure, rotating content.</li>
+    <li><strong>Hyperfocus vs scatter:</strong> ride the focus when it comes, and scaffold the scattered stretches (timers, body-doubling) instead of fighting them.</li>
+    <li><strong>Connection vs drain:</strong> plan recovery time around socializing rather than treating the crash as a failure.</li>
+  </ul>`;
+function renderResult(){
+  const r=lastResult;const nd=r.ndPositive;
+  renderTypeBanner();
+  const hero=nd?P(r.ranked[0]):null;
+  const kick=document.querySelector('#results .primary .kicker');
+  document.getElementById('rEm').textContent=nd?hero.em:'🧭';
+  document.getElementById('rName').textContent=nd?hero.name:r.type;
+  const badge=document.getElementById('rBadge');
+  if(nd){const o=ORIGIN[hero.origin];badge.innerHTML=`<span class="origin-badge" style="background:${o.color}22;color:${o.color};border:1px solid ${o.color}">${hero.an} · ${r.type}</span>`;
+    if(kick)kick.textContent='Your primary strength';document.getElementById('rLook').textContent=hero.look;}
+  else{badge.innerHTML='';if(kick)kick.textContent='Your result';
+    document.getElementById('rLook').textContent=(r.type==='Some traits')
+      ?"You show some autistic or ADHD traits, but below the screening line. Real and worth noticing, though not a strong indication on its own."
+      :"Your answers don't point strongly toward autistic or ADHD traits. This tool is built for neurodivergent minds, so there isn't much here for you, and that's completely fine.";}
+  const sig=document.getElementById('rSignature');
+  sig.innerHTML=nd?(`<div class="note" style="margin-bottom:5px">Your signature strengths</div>`+r.signature.map((id,idx)=>`<span class="pill" style="border-color:var(--accent2);color:var(--ink)">${idx+1}. ${P(id).em} ${P(id).name}</span>`).join(' ')):'';
+  ['pDetail','pShape','pCombo','pShineKry','pRecs','pSquad','pWeak'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display=nd?'':'none';});
+  document.getElementById('rAudhdBox').style.display=(nd&&r.type==='AuDHD')?'block':'none';
+  const dc=document.getElementById('deepCta');if(dc)dc.style.display=(nd&&r.mode!=='deep')?'block':'none';
+  if(nd){
+    const top=hero;
+    renderDetail();
+    const c=document.getElementById('rConstellation');c.innerHTML='';
+    const order=[...r.ranked];
+    order.forEach((id,idx)=>{const p=P(id),v=r.powers[id],col=ORIGIN[p.origin].color;
+      c.innerHTML+=`<div class="cst"><div class="nm">${idx===0?'★ ':''}${p.em} ${p.name}</div>
+        <div class="bar"><span>${v}</span><div style="width:${v}%;background:${col}"></div></div></div>`;});
+    document.getElementById('rAcq').innerHTML='';
+    document.getElementById('rShine').textContent=top.shine;
+    document.getElementById('rKry').textContent=top.kry;
+    const rg=document.getElementById('rRecs');rg.innerHTML='';
+    [['With friends','social'],['At work','work'],['With family','family']].forEach(([lab,k])=>{rg.innerHTML+=`<div class="rec"><div class="lbl">${lab}</div><div style="margin-top:5px;font-size:13.5px">${top.rec[k]}</div></div>`;});
+    renderCombination();
+    renderWeaknesses();
+    if(r.type==='AuDHD')document.getElementById('rAudhd').innerHTML=AUDHD_TEXT;
+    const partner=bestPartner(r.ranked[0]);
+    document.getElementById('rSquad').innerHTML=`Your <strong>${top.name}</strong> pairs powerfully with <strong>${P(partner.id).em} ${P(partner.id).name}</strong>. ${partner.why} Look for that person on your team or in your friendships.`;
+  }
+  renderMaskRead();
+  renderWellbeingRouting();renderTailored();renderDyadResult();
+}
+function renderTypeBanner(){
+  const r=lastResult;const el=document.getElementById('rProfile');if(!el)return;
+  const meter=(label,score,thr,col,lineCol)=>
+    `<div style="margin-top:10px"><div style="font-size:12px;color:var(--dim)">${label}: ${score}/100${score>=thr?' · above the screening line':''}</div>
+      <div class="bar" style="position:relative"><span>${score}</span><div style="width:${score}%;background:${col}"></div><div style="position:absolute;left:${thr}%;top:-2px;bottom:-2px;width:3px;background:${lineCol};box-shadow:0 0 0 1px rgba(6,12,20,.5);z-index:4;border-radius:2px"></div></div></div>`;
+  const msg={'AuDHD':"Your answers point toward <strong>AuDHD</strong> — both the autistic and ADHD domains sit above the screening line.",
+    'Autistic-leaning':"Your answers lean <strong>autistic</strong> — the autistic domain is above the line, ADHD below.",
+    'ADHD-leaning':"Your answers lean <strong>ADHD</strong> — the ADHD domain is above the line, autistic below.",
+    'Some traits':"You show <strong>some</strong> autistic or ADHD traits, but below the screening line.",
+    'Not strongly indicated':"Your answers <strong>don't strongly indicate</strong> autistic or ADHD traits."}[r.type];
+  el.innerHTML=`<p style="margin:2px 0 4px">${msg}</p>`+
+    meter('Autistic domain',r.autScore,r.autThresh,'var(--autism)','#ffffff')+
+    meter('ADHD domain',r.adhdScore,r.autThresh,'var(--adhd)','var(--accent)')+
+    `<p style="font-size:12px;color:var(--dim);margin-top:10px">A suggestive screen, not a diagnosis. The line is a threshold modelled on brief tools like the AQ-10 and ASRS. Only a professional can diagnose.</p>`;
+}
+function renderDetail(){
+  const r=lastResult,el=document.getElementById('rDetail');if(!el)return;
+  const f=r.facets||{};
+  const bar=id=>{const v=f[id]||0,hot=v>=55,col=FACETS[id].d==='aut'?'var(--autism)':'var(--adhd)';
+    return `<div class="spikerow"><div class="nm" title="${FACETS[id].desc}">${FACETS[id].label}</div><div class="bar"><span>${v}</span><div style="width:${v}%;background:${col};${hot?'':'opacity:.45'}"></div></div></div>`;};
+  let html='';
+  const showAut=r.autPos||r.autScore>=42, showAdhd=r.adhdPos||r.adhdScore>=42;
+  if(showAut){
+    html+=`<div class="rqcat" style="color:var(--autism)">Autistic profile · ${r.autScore}/100</div>`+['A1','A2','A3','A4','A5'].map(bar).join('');
+    if(r.autism_emphasis&&r.autism_emphasis.length)html+=`<p class="note" style="margin-top:6px">Most pronounced: <strong>${r.autism_emphasis.join(', ')}</strong>.</p>`;
+  }
+  if(showAdhd){
+    html+=`<div class="rqcat" style="color:var(--adhd);margin-top:14px">ADHD profile · ${r.adhdScore}/100</div>`+['H1','H2','H3','H4','H5'].map(bar).join('');
+    if(r.adhdPresentation)html+=`<p class="note" style="margin-top:6px">Presentation: <strong>${r.adhdPresentation}</strong>.</p>`;
+  }
+  if(r.type==='AuDHD')html+=`<p style="font-size:13px;margin-top:12px">Both domains are elevated, the AuDHD combination. Where facets pull opposite ways, needing sameness while chasing novelty, deep focus alongside distractibility, is exactly where the internal push-pull lives.</p>`;
+  el.innerHTML=html;
+}
+function renderWeaknesses(){
+  const r=lastResult;const el=document.getElementById('rWeak');if(!el)return;
+  const list=TYPE_CHALLENGES[r.type]||[];const top=P(r.ranked[0]);
+  el.innerHTML=`<p style="font-size:13.5px;color:var(--dim);margin:0 0 8px">Real strengths carry real costs. For your profile, common challenges include:</p>`+
+    `<ul style="margin:0 0 8px;padding-left:18px;font-size:13.5px">${list.map(x=>`<li>${x}</li>`).join('')}</ul>`+
+    `<div class="note">And your <strong>${top.name}</strong>'s kryptonite: ${top.kry}</div>`;
+}
+const CONTRIB={diver:"deep, sustained focus",oracle:"a pattern-and-error radar",spark:"a flood of fresh ideas",sentinel:"a strong moral compass",antenna:"fine-grained perception",empath:"a deep read on people",fire:"calm under pressure",truth:"clear, honest signal",archivist:"encyclopedic depth",dynamo:"drive and momentum",weaver:"cross-domain synthesis"};
+const ARENAS={diver:["research","deep craft","engineering"],oracle:["analysis","QA & security","strategy"],spark:["ideation","entrepreneurship","creative work"],sentinel:["ethics","advocacy","integrity roles"],antenna:["design","care work","quality & safety"],empath:["support","mediation","teaching","UX"],fire:["crisis & ops","live events","emergency work"],truth:["feedback cultures","negotiation","science"],archivist:["expertise roles","knowledge work","teaching"],dynamo:["startups","sales","fast-paced roles"],weaver:["strategy","invention","interdisciplinary work"]};
+function renderCombination(){
+  const r=lastResult,el=document.getElementById('rCombo');if(!el)return;
+  const lp=r.likertPowers||r.powers;
+  const highCount=POWERS.filter(p=>lp[p.id]>=80).length;
+  const broad=highCount>=6, focused=highCount<=3;
+  const top=r.ranked.slice(0,3);
+  const c=top.map(id=>CONTRIB[id]);
+  const arenas=[...new Set(top.flatMap(id=>ARENAS[id]))].slice(0,5);
+  let frame;
+  if(broad) frame=`You light up across <strong>many</strong> strengths, not just one. That's a real profile with a name, the multi-strength mind (sometimes called a "multipotentialite"). The opportunity isn't to pick one and drop the rest, it's that your <em>combination</em> is rare and genuinely hard to replace. The honest catch, and it's a real one for AuDHD minds, is focus, finishing, and the pressure to "just specialize." The move: let your top few <em>stack</em> toward a niche where breadth compounds instead of scattering.`;
+  else if(focused) frame=`Your strengths concentrate in a few areas, and depth is your edge, you go further than most in what you're built for. The opportunity is to lean in, and pair with people whose strengths cover your gaps.`;
+  else frame=`You carry a few clear strengths with real depth behind them, a balance of focus and range. Your combination is where the value sits.`;
+  el.innerHTML=`<p style="margin:2px 0 12px">${frame}</p>
+    <div class="rec" style="border-color:var(--accent2)">
+      <div class="lbl" style="color:var(--accent2)">Your stack right now</div>
+      <p style="margin:6px 0 4px;font-size:14px"><strong>${P(top[0]).em} ${P(top[0]).name} + ${P(top[1]).em} ${P(top[1]).name} + ${P(top[2]).em} ${P(top[2]).name}</strong></p>
+      <p style="margin:0 0 6px;font-size:13.5px;color:var(--dim)">That's ${c[0]}, ${c[1]}, and ${c[2]} in one person, few people bring all three together.</p>
+      <div class="note">Arenas that reward this mix: ${arenas.join(', ')}.</div>
+    </div>`;
+}
+function renderMaskRead(){
+  const r=lastResult,m=r.mask,mr=document.getElementById('rMask');if(!mr)return;
+  let t;
+  if(m>=66)t=`Your masking load reads <strong>high (${m})</strong>. Your surface answers probably understate your real traits, you've become expert at hiding them, often at real cost.`;
+  else if(m>=40)t=`Your masking load reads <strong>moderate (${m})</strong>. Some of you may be running quietly under a mask.`;
+  else t=`Your masking load reads <strong>lower (${m})</strong>. Your surface answers are likely close to your true reading.`;
+  mr.innerHTML=`<div class="bar" style="margin:6px 0"><span>${m}</span><div style="width:${m}%;background:linear-gradient(90deg,#3a4560,var(--warn))"></div></div><p style="font-size:13.5px;margin:6px 0 0">${t}</p>`;
+}
+function bestPartner(id){
+  for(const k in SYNERGY){const [a,b]=k.split('|');if(a===id)return{id:b,why:SYNERGY[k]};if(b===id)return{id:a,why:SYNERGY[k]};}
+  // fallback: opposite role
+  const me=P(id);const pref={depth:'pace',pace:'depth',generator:'finisher',finisher:'generator',perception:'buffer',buffer:'perception',guard:'buffer'}[me.role]||'finisher';
+  const cand=POWERS.find(p=>p.role===pref&&p.id!==id)||POWERS.find(p=>p.id!==id);
+  return{id:cand.id,why:'One of you generates while the other finishes, the most reliable synergy shape there is.'};
+}
+
+/* ============ OPT-IN / RESEARCH (privacy-first, pluggable) ============ */
+// DATA COLLECTION (see SETUP-DATA-COLLECTION.md): paste your Google Apps Script
+// web-app URL below (it ends in /exec) to start collecting opt-in responses into
+// your own Google Sheet. Leave as null for prototype mode (nothing is transmitted).
+const RESEARCH_ENDPOINT=null; /* Research collection is OFF (maker request, 2026-08). Deployed endpoint saved for later: https://script.google.com/macros/s/AKfycbw01iaVy2G9IRXCtMckF0RT_PB1akbOkKODtwEMowQOBF5cW_btA-RmnUc4fGxrvHLH/exec  To re-enable: set this to that URL and restore the opt-in panel in the results view. */
+function toggleContrib(){const f=document.getElementById('contribForm');f.style.display=f.style.display==='none'?'block':'none';}
+document.addEventListener('change',e=>{if(e.target.id==='consent')document.getElementById('contribBtn').disabled=!e.target.checked;});
+function contributionPayload(){
+  const r=lastResult||{};
+  return{
+    version:"suspectrum-proto-0.7", timestamp:r.ts,
+    tier:r.mode||'quick',
+    result:{primary:r.ranked?r.ranked[0]:null,type:r.type,nd_positive:r.ndPositive===true,autism_score:r.autScore,adhd_score:r.adhdScore,adhd_presentation:r.adhdPresentation||'',autism_emphasis:r.autism_emphasis||[],facets:r.facets||{},powers:r.powers,mask:r.mask,signature:r.signature||[]},
+    answers:answers,
+    wellbeing:r.wellbeing!=null?r.wellbeing:null,
+    goals:r.goals||{settings:[],goal:''},
+    research:researchScores(),
+    research_answers:RQ_FLAT.map((q,i)=>researchAnswers[i]!=null?researchAnswers[i]:null),
+    dyad:{pair_code:window._dyadPair||null,role:window._dyadRole||null,rel_type:(document.getElementById('relType')||{}).value||'',rel_outcome:dyadOutcomeScore()},
+    context:{age:v('cAge'),gender:v('cGender'),ethnicity:v('cEth'),diagnosis:v('cDx')},
+    consent:document.getElementById('consent')?document.getElementById('consent').checked:false
+  };
+  function v(id){const el=document.getElementById(id);return el?el.value:"";}
+}
+function submitToResearch(){
+  const payload=contributionPayload();
+  const msg=document.getElementById('contribMsg');
+  if(!RESEARCH_ENDPOINT){
+    // prototype: package + download, nothing leaves the browser
+    downloadJSON(payload,'suspectrum-contribution.json');
+    msg.textContent="Prototype mode: nothing was transmitted. Your contribution was packaged into a file you can keep or send in yourself. Thank you.";
+    return;
+  }
+  /* POST the full payload as JSON to the Apps Script web app (see SETUP doc).
+     mode:'no-cors' + a text/plain body is what lets a static GitHub Pages page
+     post to Apps Script; the response is opaque, so we confirm optimistically
+     and keep a download as a fallback if the network call throws. */
+  fetch(RESEARCH_ENDPOINT,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)})
+    .then(()=>{msg.textContent="Thank you, your anonymized contribution was recorded.";})
+    .catch(()=>{msg.textContent="Couldn't reach the server, but your download still worked.";downloadJSON(payload,'suspectrum-contribution.json');});
+}
+function downloadResult(){
+  const r=lastResult;if(!r){return;}
+  downloadJSON({version:"suspectrum-proto-0.7",timestamp:r.ts,type:r.type,primary:r.ranked?r.ranked[0]:null,autism_score:r.autScore,adhd_score:r.adhdScore,adhd_presentation:r.adhdPresentation,facets:r.facets},'my-suspectrum-result.json');
+}
+function downloadJSON(obj,name){
+  const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+/* ============ OPT-IN RESEARCH BATTERY (paraphrased scaffolds — license the real scales before deployment; see Measurement-Plan.md) ============ */
+// Each construct is an INSTRUMENT SLOT: correct response scale, subscale key, and reverse-
+// scoring support, with placeholder items you replace with the official validated instrument.
+// Swapping in real items = paste into `items` and set placeholder:false. See Validated-Instruments.md.
+const INSTRUMENTS=[
+ {key:'masking',name:'Masking',instrument:'CAT-Q (Hull et al., 2019)',source:'cat-q.org · Hull et al. 2019',
+  license:'Free for non-commercial clinical & research use — cite Hull et al. 2019',officialCount:25,points:7,anchors:['Strongly disagree','Strongly agree'],placeholder:false,
+  items:[{t:"When I am interacting with someone, I deliberately copy their body language or facial expressions."},
+         {t:"I monitor my body language or facial expressions so that I appear relaxed."},
+         {t:"I rarely feel the need to put on an act in order to get through a social situation.",rev:true},
+         {t:"I have developed a script to follow in social situations."},
+         {t:"I will repeat phrases that I have heard others say in the exact same way that I first heard them."},
+         {t:"I adjust my body language or facial expressions so that I appear interested by the person I am interacting with."},
+         {t:"In social situations, I feel like I'm 'performing' rather than being myself."},
+         {t:"In my own social interactions, I use behaviours that I have learned from watching other people interacting."},
+         {t:"I always think about the impression I make on other people."},
+         {t:"I need the support of other people in order to socialise."},
+         {t:"I practice my facial expressions and body language to make sure they look natural."},
+         {t:"I don't feel the need to make eye contact with other people if I don't want to.",rev:true},
+         {t:"I have to force myself to interact with people when I am in social situations."},
+         {t:"I have tried to improve my understanding of social skills by watching other people."},
+         {t:"I monitor my body language or facial expressions so that I appear interested by the person I am interacting with."},
+         {t:"When in social situations, I try to find ways to avoid interacting with others."},
+         {t:"I have researched the rules of social interactions to improve my own social skills."},
+         {t:"I am always aware of the impression I make on other people."},
+         {t:"I feel free to be myself when I am with other people.",rev:true},
+         {t:"I learn how people use their bodies and faces to interact by watching television or films, or by reading fiction."},
+         {t:"I adjust my body language or facial expressions so that I appear relaxed."},
+         {t:"When talking to other people, I feel like the conversation flows naturally.",rev:true},
+         {t:"I have spent time learning social skills from television shows and films, and try to use these in my interactions."},
+         {t:"In social interactions, I do not pay attention to what my face or body are doing.",rev:true},
+         {t:"In social situations, I feel like I am pretending to be 'normal'."}]},
+ {key:'codeswitch',name:'Cultural / racial code-switching',instrument:'No single validated scale — adapted items',source:'McCluney et al. tradition',
+  license:'Construct/adapt; no standard free instrument',officialCount:null,points:5,anchors:['Strongly disagree','Strongly agree'],placeholder:true,
+  items:[{t:"I change how I speak, dress, or carry myself to fit the dominant group."},
+         {t:"I adjust how I present myself so people from the majority culture accept me."},
+         {t:"Switching between my community and mainstream settings takes real effort."},
+         {t:"I feel I have to tone down my culture in certain rooms."}]},
+ {key:'discrimination',name:'Everyday discrimination',instrument:'Everyday Discrimination Scale (Williams et al., 1997)',source:'PhenX Toolkit · Williams et al. 1997',
+  license:'Freely available, no permission needed — cite Williams et al. 1997',officialCount:10,points:6,anchors:['Never','Almost every day'],placeholder:false,
+  items:[{t:"You are treated with less courtesy than other people are."},
+         {t:"You are treated with less respect than other people are."},
+         {t:"You receive poorer service than other people at restaurants or stores."},
+         {t:"People act as if they think you are not smart."},
+         {t:"People act as if they are afraid of you."},
+         {t:"People act as if they think you are dishonest."},
+         {t:"People act as if they're better than you are."},
+         {t:"You are called names or insulted."},
+         {t:"You are threatened or harassed."},
+         {t:"You are followed around in stores."}]},
+ {key:'minoritystress',name:'Minority stress',instrument:'Autistic Minority Stress (Botha & Frost 2020)',source:'Botha & Frost 2020 — via paper/author',
+  license:'Request from author / obtain from paper materials',officialCount:null,points:7,anchors:['Strongly disagree','Strongly agree'],placeholder:true,
+  items:[{t:"I expect to be rejected or judged because of the ways I'm different."},
+         {t:"I hide parts of who I am to avoid negative reactions."},
+         {t:"I feel I have to work harder than others just to be seen as acceptable."},
+         {t:"I've come to expect that some settings won't be safe for someone like me."}]},
+ {key:'strengths',name:'Strengths',instrument:'No standard inventory — self-built items',source:'Lampinen et al. 2026 (study, not a licensed scale)',
+  license:'Build/adapt; no standard instrument',officialCount:null,points:5,anchors:['Strongly disagree','Strongly agree'],placeholder:true,
+  items:[{t:"I have talents that come directly from how my mind works."},
+         {t:"There are things I do better than most people because of my neurodivergence."},
+         {t:"My focus, memory, creativity, or attention to detail is a real strength."},
+         {t:"My way of thinking has been an advantage in the right setting."}]}
+];
+const CATQ_SUB={compensation:[1,4,5,8,11,14,17,20,23],masking:[2,6,9,12,15,18,21],assimilation:[3,7,10,13,16,19,22,24,25]};
+(function(){const m=INSTRUMENTS.find(i=>i.key==='masking');if(m)m.items.forEach((it,idx)=>{const n=idx+1;it.sub=CATQ_SUB.compensation.includes(n)?'compensation':(CATQ_SUB.masking.includes(n)?'masking':'assimilation');});})();
+const RQ_FLAT=[];
+INSTRUMENTS.forEach(ins=>ins.items.forEach(it=>RQ_FLAT.push({key:ins.key,points:ins.points,rev:!!it.rev,text:it.t,sub:it.sub||null})));
+let researchAnswers={};
+function renderResearch(){
+  const box=document.getElementById('researchBattery');if(!box)return;box.innerHTML='';let gi=0;
+  INSTRUMENTS.forEach(ins=>{
+    const h=document.createElement('div');h.className='rqcat';
+    h.innerHTML=ins.name+(ins.placeholder?'':` · <span style="color:var(--dim);text-transform:none;letter-spacing:0">✓ ${ins.instrument}</span>`);
+    box.appendChild(h);
+    const leg=document.createElement('div');leg.className='note';leg.style.margin='0 0 6px';
+    leg.textContent=`1 = ${ins.anchors[0]} … ${ins.points} = ${ins.anchors[1]}`;box.appendChild(leg);
+    ins.items.forEach(it=>{
+      const idx=gi++;const d=document.createElement('div');d.className='rq';
+      let seg='';for(let n=1;n<=ins.points;n++)seg+=`<button data-i="${idx}" data-v="${n}">${n}</button>`;
+      d.innerHTML=`<div class="qt">${it.t}</div><div class="seg">${seg}</div>`;box.appendChild(d);
+    });
+  });
+  box.querySelectorAll('.seg button').forEach(b=>{
+    b.onclick=()=>{researchAnswers[+b.dataset.i]=+b.dataset.v;
+      b.parentNode.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');};
+  });
+}
+function researchScores(){
+  const out={};
+  INSTRUMENTS.forEach(ins=>{
+    const vals=RQ_FLAT.map((q,i)=>{
+      if(q.key!==ins.key)return null;const v=researchAnswers[i];if(v==null)return null;
+      const sv=q.rev?(q.points+1-v):v;return (sv-1)/(q.points-1)*100;
+    }).filter(v=>v!=null);
+    out[ins.key]=vals.length?Math.round(vals.reduce((a,v)=>a+v,0)/vals.length):null;
+  });
+  ['compensation','masking','assimilation'].forEach(sname=>{
+    const vals=RQ_FLAT.map((q,i)=>{
+      if(q.key!=='masking'||q.sub!==sname)return null;const v=researchAnswers[i];if(v==null)return null;
+      const sv=q.rev?(q.points+1-v):v;return (sv-1)/(q.points-1)*100;
+    }).filter(v=>v!=null);
+    out['catq_'+sname]=vals.length?Math.round(vals.reduce((a,v)=>a+v,0)/vals.length):null;
+  });
+  return out;
+}
+renderResearch();
+
+/* ============ TIER 1: DEEPER PROFILE + WELLBEING + CONTEXT ============ */
+const POWER_EXTRA={
+ diver:["I go so deep into a task that the rest of the world falls away.","Switching away from something I'm absorbed in feels almost painful."],
+ oracle:["I can often predict how something will unfold because I see the pattern.","Details that don't fit nag at me until I understand why."],
+ spark:["I lose interest once an idea stops being new.","People say my thinking is original or unexpected."],
+ sentinel:["Broken promises or double standards genuinely upset me.","I hold myself and others to a strong sense of what's right."],
+ antenna:["Busy or loud places drain me faster than they drain most people.","Certain textures, sounds, or lights affect me strongly."],
+ empath:["Other people's distress can stay with me long after they've moved on.","People tend to feel deeply understood by me."],
+ fire:["Urgency focuses me when nothing else can.","I sometimes leave things late because pressure helps me perform."],
+ truth:["I find indirect social games and small talk hard or pointless.","I value honesty over smoothing things over."],
+ archivist:["I dive far deeper into my interests than the situation requires.","My interests can become a whole world I happily disappear into."],
+ dynamo:["I think better when I'm moving, pacing, or using my hands.","Sitting through long, still meetings is physically uncomfortable."],
+ weaver:["I explain things with analogies from very different domains.","I reach answers by a route that's hard to show step by step."]
+};
+const DEEP_FLAT=[];
+POWERS.forEach(p=>{(POWER_EXTRA[p.id]||[]).forEach(t=>DEEP_FLAT.push({power:p.id,text:t}));});
+let deepAnswers={};
+const WELLBEING_ITEMS=[
+ "Lately I feel drained or burned out more days than not.",
+ "Everyday demands have felt like too much recently.",
+ "I've had little energy or motivation for things I usually care about."];
+let wellbeingAnswers={};
+const SETTINGS=["Work or school","Social situations","Family","Sensory environments","Focus & organization"];
+const GOALS=["Understanding myself","Doing better at work","Better relationships","Managing overwhelm","Finding my people"];
+let chosenSettings=new Set();
+
+function renderSeg(containerId,texts,store){
+  const box=document.getElementById(containerId);if(!box)return;box.innerHTML='';
+  texts.forEach((t,i)=>{
+    const d=document.createElement('div');d.className='rq';
+    const seg=[1,2,3,4,5].map(n=>`<button data-i="${i}" data-v="${n}">${n}</button>`).join('');
+    d.innerHTML=`<div class="qt">${t}</div><div class="seg">${seg}</div>`;box.appendChild(d);
+  });
+  box.querySelectorAll('.seg button').forEach(b=>{
+    b.onclick=()=>{store[+b.dataset.i]=+b.dataset.v;
+      b.parentNode.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');};
+  });
+}
+function renderDiffDeep(){
+  const box=document.getElementById('deepDiff');if(!box)return;box.innerHTML='';
+  const groups=[{d:'aut',label:'A few more about how your mind works',legend:'1 = Strongly disagree … 5 = Strongly agree'},
+                {d:'adhd',label:'And how often these happen',legend:'1 = Never … 5 = Very often'}];
+  groups.forEach(g=>{
+    const h=document.createElement('div');h.className='rqcat';h.textContent=g.label;box.appendChild(h);
+    const leg=document.createElement('div');leg.className='note';leg.style.margin='0 0 6px';leg.textContent=g.legend;box.appendChild(leg);
+    DIFF_DEEP.forEach((it,j)=>{if(it.k!==g.d)return;
+      const d=document.createElement('div');d.className='rq';
+      let seg='';for(let n=1;n<=5;n++)seg+=`<button data-i="${j}" data-v="${n}">${n}</button>`;
+      d.innerHTML=`<div class="qt">${it.t}</div><div class="seg">${seg}</div>`;box.appendChild(d);});
+  });
+  box.querySelectorAll('.seg button').forEach(b=>{b.onclick=()=>{diffDeepAnswers[+b.dataset.i]=+b.dataset.v;
+    b.parentNode.querySelectorAll('button').forEach(x=>x.classList.remove('on'));b.classList.add('on');};});
+}
+function startDeep(){
+  go('deep');
+  renderDiffDeep();
+  renderSeg('deepPowers',DEEP_FLAT.map(q=>q.text),deepAnswers);
+  renderSeg('deepWellbeing',WELLBEING_ITEMS,wellbeingAnswers);
+  const box=document.getElementById('deepSettings');
+  if(box&&!box.dataset.filled){box.dataset.filled='1';SETTINGS.forEach(s=>{const b=document.createElement('button');b.className='pickchip';b.textContent=s;
+    b.onclick=()=>{if(chosenSettings.has(s)){chosenSettings.delete(s);b.classList.remove('on');}else{chosenSettings.add(s);b.classList.add('on');}};box.appendChild(b);});}
+  const g=document.getElementById('deepGoal');if(g&&!g.dataset.filled){g.dataset.filled='1';GOALS.forEach(x=>g.add(new Option(x,x)));}
+}
+function submitDeep(){recomputeDeep();go('results');renderResult();}
+function recomputeDeep(){
+  if(!lastResult)return;
+  const scores={};
+  POWERS.forEach(p=>{
+    let vals=[];
+    ITEMS.forEach((it,i)=>{if(it.k==='power'&&it.power===p.id&&answers[i]!=null)vals.push(norm(answers[i]));});
+    DEEP_FLAT.forEach((q,i)=>{if(q.power===p.id&&deepAnswers[i]!=null)vals.push(norm(deepAnswers[i]));});
+    scores[p.id]=vals.length?Math.round(vals.reduce((a,v)=>a+v,0)/vals.length):(lastResult.raw[p.id]||50);
+  });
+  const ranked=[...POWERS].map(p=>p.id).sort((a,b)=>scores[b]-scores[a]);
+  const vals=POWERS.map(p=>scores[p.id]);const mean=Math.round(vals.reduce((a,v)=>a+v,0)/vals.length);
+  const rel={};POWERS.forEach(p=>rel[p.id]=scores[p.id]-mean);
+  lastResult.likertPowers=scores;
+  if(lastResult.md){applyMaxdiff(lastResult.md);}
+  else{lastResult.powers=scores;lastResult.raw=scores;lastResult.ranked=ranked;lastResult.signature=ranked.slice(0,3);lastResult.rel=rel;lastResult.selfMean=mean;}
+  lastResult.mode='deep';
+  const prof=facetProfile(computeFacets(true));
+  lastResult.facets=prof.facets;lastResult.autScore=prof.autScore;lastResult.adhdScore=prof.adhdScore;lastResult.autThresh=prof.autThresh;
+  lastResult.type=prof.type;lastResult.ndPositive=prof.ndPositive;lastResult.autPos=prof.autPos;lastResult.adhdPos=prof.adhdPos;
+  lastResult.adhdPresentation=prof.adhdPresentation;lastResult.autism_emphasis=prof.autism_emphasis;
+  const wv=Object.values(wellbeingAnswers);
+  lastResult.wellbeing=wv.length?Math.round(wv.reduce((a,v)=>a+(v-1)/4*100,0)/wv.length):null;
+  lastResult.goals={settings:[...chosenSettings],goal:(document.getElementById('deepGoal')||{}).value||''};
+}
+function enhanceResults(){
+  const dc=document.getElementById('deepCta');if(dc)dc.style.display=(lastResult&&lastResult.mode==='deep')?'none':'block';
+  renderWellbeingRouting();renderTailored();renderDyadResult();
+}
+function renderWellbeingRouting(){
+  const el=document.getElementById('wellbeingNote');if(!el)return;
+  if(lastResult&&lastResult.wellbeing!=null&&lastResult.wellbeing>=60){
+    el.innerHTML=`<div class="warnbox">Some of your answers suggest you might be running on empty right now. That's worth taking seriously, and it isn't a personal failing. Please consider reaching out to someone you trust or a professional, you deserve support, not just a badge. If you're in crisis, contact your local emergency services or a crisis line.</div>`;
+  } else el.innerHTML='';
+}
+function renderTailored(){
+  const el=document.getElementById('tailoredNote');if(!el)return;
+  const g=lastResult&&lastResult.goals;
+  if(!g||!g.settings||!g.settings.length){el.innerHTML='';return;}
+  const top=P(lastResult.ranked[0]);
+  const map={"Work or school":"work","Social situations":"social","Family":"family"};
+  const s=g.settings[0],key=map[s]||"work";
+  el.innerHTML=`<div class="rec" style="border-color:var(--accent2)"><div class="lbl" style="color:var(--accent2)">Because you flagged “${s}”</div><div style="margin-top:5px;font-size:13.5px">${top.rec[key]}</div></div>`;
+}
+
+/* ============ DYAD LINKING ============ */
+const DYAD_OUTCOME=[
+ "We understand each other well.",
+ "Together we're better than either of us alone.",
+ "I'd choose to spend time or work with them again.",
+ "We handle disagreements without it damaging things."];
+let dyadOutcomeAnswers={};
+function dyadOutcomeScore(){const v=Object.values(dyadOutcomeAnswers);return v.length?Math.round(v.reduce((a,x)=>a+(x-1)/4*100,0)/v.length):null;}
+function encodeProfile(){
+  const r=lastResult;const obj={v:4,primary:r.ranked[0],flavor:r.flavor,powers:r.powers,mask:r.mask};
+  return btoa(unescape(encodeURIComponent(JSON.stringify(obj))));
+}
+function genCode(){
+  const w=["OTTER","RAVEN","BADGER","COMET","CEDAR","EMBER","MOSS","RIVER","FINCH","ONYX","LARK","SABLE","HERON","FLINT"];
+  const pick=()=>w[Math.floor(Math.random()*w.length)];
+  return pick()+"-"+pick()+"-"+Math.floor(1000+Math.random()*9000);
+}
+let myPairCode=null;
+function makeShareLink(){
+  if(!lastResult){return;}
+  myPairCode=myPairCode||genCode();
+  const url=location.origin+location.pathname+"?pair="+encodeURIComponent(myPairCode)+"&p="+encodeProfile();
+  const area=document.getElementById('shareArea');
+  area.innerHTML=`<div class="sharebox"><div class="note" style="margin-bottom:4px">Send this link to your friend or coworker. When they finish, they'll see how you two fit.</div>
+    <input type="text" id="shareUrl" readonly value="${url}">
+    <div style="margin-top:8px"><button class="btn ghost" onclick="copyShare()">Copy link</button><span id="copyMsg" class="note"></span></div>
+    <div class="note" style="margin-top:8px">Pairing code: <strong>${myPairCode}</strong> (both of your responses link under this code if you contribute to the research)</div></div>`;
+  window._dyadRole='initiator';window._dyadPair=myPairCode;
+}
+function copyShare(){
+  const el=document.getElementById('shareUrl');if(!el)return;
+  const done=()=>{const m=document.getElementById('copyMsg');if(m)m.textContent=' ✓ copied';};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(el.value).then(done).catch(()=>{el.select();try{document.execCommand('copy');}catch(e){}done();});}
+  else{el.select();try{document.execCommand('copy');}catch(e){}done();}
+}
+let inviteProfile=null,invitePair=null;
+(function readInvite(){
+  try{
+    const q=new URLSearchParams(location.search);const p=q.get('p'),pair=q.get('pair');
+    if(p&&pair){inviteProfile=JSON.parse(decodeURIComponent(escape(atob(p))));invitePair=pair;}
+  }catch(e){inviteProfile=null;invitePair=null;}
+  const b=document.getElementById('inviteBanner');
+  if(inviteProfile&&invitePair&&b){b.innerHTML=`<div class="invite">A friend shared their Suspectrum profile with you (code <strong>${invitePair}</strong>). Take the test below and you'll see how your powers fit together.</div>`;}
+})();
+function squadVerdict(a,b){
+  const pa=P(a),pb=P(b);
+  if(a===b){const t=FRICTION[keyOf(a,b)]||`Two of the same power double the strength and the blind spot at once. Scaffold: a buffer, or a third power that covers the shared gap.`;
+    return `<div class="verdict fri"><div class="vtag" style="color:var(--warn)">Twin powers · needs scaffolding</div><p style="margin:4px 0 0">${t}</p></div>`;}
+  const k=keyOf(a,b);
+  if(SYNERGY[k])return `<div class="verdict syn"><div class="vtag" style="color:var(--good)">Natural synergy</div><p style="margin:4px 0 0">${SYNERGY[k]}</p></div>`;
+  if(FRICTION[k])return `<div class="verdict fri"><div class="vtag" style="color:var(--warn)">Needs scaffolding</div><p style="margin:4px 0 0">${FRICTION[k]}</p></div>`;
+  const gen=[pa,pb].filter(p=>p.role==='generator').length,fin=[pa,pb].filter(p=>p.role==='finisher').length;
+  if(gen>=1&&fin>=1)return `<div class="verdict syn"><div class="vtag" style="color:var(--good)">Complementary · generator + finisher</div><p style="margin:4px 0 0">One of you generates and the other finishes, the most reliable synergy shape there is.</p></div>`;
+  return `<div class="verdict"><div class="vtag" style="color:var(--accent)">Workable · design the seam</div><p style="margin:4px 0 0">No sharp clash and no automatic magic. Name what each of you needs, and agree who owns the follow-through.</p></div>`;
+}
+function renderDyadResult(){
+  const box=document.getElementById('dyadResult');if(!box)return;
+  if(!inviteProfile||!lastResult){box.innerHTML='';return;}
+  const aP=P(inviteProfile.primary),bP=P(lastResult.ranked[0]);
+  box.innerHTML=`<div class="panelbox" style="border-color:var(--accent2)">
+    <div class="lbl" style="color:var(--accent2)">Your squad fit · code ${invitePair}</div>
+    <p style="margin:6px 0"><strong>${aP.em} ${aP.name}</strong> (them) + <strong>${bP.em} ${bP.name}</strong> (you)</p>
+    ${squadVerdict(inviteProfile.primary,lastResult.ranked[0])}
+    <div class="lbl" style="margin-top:14px">How does this pairing actually feel? (optional, powers the research)</div>
+    <select id="relType" style="margin-top:6px"><option value="">We are…</option><option>Friends</option><option>Coworkers</option><option>Both</option></select>
+    <div id="dyadOutcome" style="margin-top:8px"></div></div>`;
+  renderSeg('dyadOutcome',DYAD_OUTCOME,dyadOutcomeAnswers);
+  window._dyadRole='joiner';window._dyadPair=invitePair;
+}
+
+/* ============ EXPLORE: grid + modal ============ */
+const grid=document.getElementById('powerGrid');
+POWERS.forEach(p=>{
+  const o=ORIGIN[p.origin];const d=document.createElement('div');d.className='power';
+  d.innerHTML=`<span class="otag" style="background:${o.color}" title="${o.label}"></span>
+    <div class="em">${p.em}</div><h3>${p.name}</h3><div class="an">${p.an}</div>
+    <div style="color:var(--dim);font-size:11.5px;margin-top:5px">${p.con}</div>`;
+  d.onclick=()=>openModal(p);grid.appendChild(d);
+});
+function openModal(p){
+  document.getElementById('mEm').textContent=p.em;
+  document.getElementById('mName').textContent=p.name;
+  document.getElementById('mAn').textContent=p.an;
+  document.getElementById('mCon').textContent=p.con;
+  const mo=document.getElementById('mOrig');mo.textContent=ORIGIN[p.origin].label;mo.style.color=ORIGIN[p.origin].color;mo.style.borderColor=ORIGIN[p.origin].color;
+  document.getElementById('mLook').textContent=p.look;
+  document.getElementById('mShine').textContent=p.shine;
+  document.getElementById('mKry').textContent=p.kry;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+document.getElementById('modal').onclick=e=>{if(e.target.id==='modal')closeModal();};
+
+/* ============ EXPLORE: squad ============ */
+const selA=document.getElementById('selA'),selB=document.getElementById('selB');
+POWERS.forEach(p=>{selA.add(new Option(p.em+' '+p.name,p.id));selB.add(new Option(p.em+' '+p.name,p.id));});
+selA.selectedIndex=2;selB.selectedIndex=1;
+const SYNERGY={
+ "spark|oracle":"One throws off ten ideas, the other spots which one has real structure, generator plus finisher.",
+ "diver|dynamo":"Depth plus pace, the Diver goes deep while the Dynamo keeps things moving and drags them up for air.",
+ "empath|truth":"A feedback team that's both kind and clear, one reads the room, the other says the real thing.",
+ "weaver|archivist":"Invention plus mastery, one connects far-flung domains, the other knows which connections are real.",
+ "truth|oracle":"Clarity plus rigor, the Oracle finds what's off and the Truth-teller names it, a formidable review pair.",
+ "spark|archivist":"Novelty plus depth, fresh ideas grounded by someone who knows the domain cold.",
+ "antenna|empath":"High-perception pair, between them almost nothing in a room goes unnoticed.",
+ "fire|diver":"Sprint plus deep-work, the Firefighter takes the emergencies so the Diver's focus stays protected.",
+ "sentinel|empath":"Conscience plus care, moral clarity delivered warmly enough that people can actually hear it."
+};
+const FRICTION={
+ "truth|truth":"Two Truth-tellers with no buffer can turn a meeting into a demolition. Scaffold: agree plain feedback is welcome, and add a warmer translator for outside rooms.",
+ "diver|diver":"Two Deep Divers can both submerge and let the project drown while they're down there. Scaffold: a shared 'surface bell', a check-in cadence someone actually owns.",
+ "sentinel|spark":"Justice-alarm meets rule-bender, each reads the other as tyrant or anarchist though both work as designed. Scaffold: name which rules are load-bearing vs negotiable in advance.",
+ "antenna|dynamo":"High sensory sensitivity next to constant motion is a real load. Scaffold: environment design, quiet zones and movement outlets, without forcing either to mimic the other.",
+ "sentinel|sentinel":"Two always-on justice alarms can escalate every small thing together. Scaffold: a shared 'is this a hill' filter before acting."
+};
+const keyOf=(a,b)=>[a,b].sort().join('|');
+function renderSquad(){
+  const a=selA.value,b=selB.value,pa=P(a),pb=P(b),out=document.getElementById('squadOut');
+  if(a===b){
+    const t=FRICTION[keyOf(a,b)]||`Two of the same power double the strength and double the blind spot, the shared kryptonite (${pa.kry.toLowerCase()}) hits both at once with no one to cover it. Scaffold: an explicit buffer, or a third person whose power covers that gap.`;
+    out.innerHTML=vbox('fri','var(--warn)','Friction pair · needs scaffolding',`${pa.em} ${pa.name} × ${pb.name}`,t+`<p class="vtag" style="color:var(--dim);margin-top:8px">Friction is information about fit and environment, not a verdict on either person.</p>`);return;
+  }
+  const k=keyOf(a,b);
+  if(SYNERGY[k]){out.innerHTML=vbox('syn','var(--good)','Superhero squad · natural synergy',`${pa.em} ${pa.name} + ${pb.em} ${pb.name}`,SYNERGY[k]+`<p style="font-size:13px;color:var(--dim);margin-top:8px"><strong>At work:</strong> assign roles along the seam so each covers the other's kryptonite. <strong>As friends:</strong> lean into what each naturally gives.</p>`);return;}
+  if(FRICTION[k]){out.innerHTML=vbox('fri','var(--warn)','Friction pair · needs scaffolding',`${pa.em} ${pa.name} × ${pb.em} ${pb.name}`,FRICTION[k]+`<p style="font-size:13px;color:var(--dim);margin-top:8px">Much of this is a two-way mismatch, the double-empathy problem, not one person's deficit. Fix with translation, not blame.</p>`);return;}
+  const gen=[pa,pb].filter(p=>p.role==='generator').length,fin=[pa,pb].filter(p=>p.role==='finisher').length;
+  if(gen>=1&&fin>=1)out.innerHTML=vbox('syn','var(--good)','Complementary · generator + finisher',`${pa.em} ${pa.name} + ${pb.em} ${pb.name}`,`One tends to generate and the other to finish, the most reliable synergy shape there is. Put the generator at the front of the pipe and the finisher at the end.`);
+  else out.innerHTML=vbox('','var(--accent)','Workable · design the seam',`${pa.em} ${pa.name} + ${pb.em} ${pb.name}`,`No sharp clash and no automatic magic here. These two work well if you design the seam: name what each needs to do their best work, and agree who owns what neither is naturally pulled toward, usually follow-through or the calm middle of a project.`);
+}
+function vbox(cls,col,tag,title,body){return `<div class="verdict ${cls}"><div class="vtag" style="color:${col}">${tag}</div><div style="font-weight:700;font-size:16px;margin:3px 0">${title}</div><p style="margin:4px 0 0;font-size:14px">${body}</p></div>`;}
+selA.onchange=renderSquad;selB.onchange=renderSquad;renderSquad();
+
+/* ============ EXPLORE: masking demo ============ */
+const slider=document.getElementById('maskSlider');const TRUE=80;
+function updateMask(){
+  const m=+slider.value;document.getElementById('mv').textContent=m+'%';
+  const surf=Math.max(0,Math.round(TRUE*(1-m/125)));
+  document.getElementById('surfBar').style.width=surf+'%';document.getElementById('surfTxt').textContent=surf;
+  document.getElementById('trueBar').style.width=TRUE+'%';document.getElementById('trueTxt').textContent=TRUE;
+  const v=document.getElementById('maskVerdict');
+  if(m>=70)v.innerHTML=`<span class="vtag" style="color:var(--accent2)">Latent power detected</span><br>Heavy mask. The naive test reads <strong>${surf}</strong>, but the true power is <strong>${TRUE}</strong>. This person isn't low-power, they've hidden a strength at real cost.`;
+  else if(m>=35)v.innerHTML=`<span class="vtag" style="color:var(--warn)">Partial suppression</span><br>Surface read (<strong>${surf}</strong>) understates the true power (<strong>${TRUE}</strong>). The correction layer adjusts upward using measured masking.`;
+  else v.innerHTML=`<span class="vtag" style="color:var(--good)">Low mask</span><br>Surface (<strong>${surf}</strong>) ≈ true (<strong>${TRUE}</strong>). But most high-masking people never look like this, which is why the layer exists.`;
+}
+slider.oninput=updateMask;updateMask();
+</script>
+</body>
+</html>
