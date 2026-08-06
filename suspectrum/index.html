@@ -127,6 +127,7 @@
   <div class="topbar">
     <div class="brand">◇ SUSPECTRUM</div>
     <div style="display:flex;gap:7px">
+      <div class="navbtn" id="navResult" style="display:none" onclick="showSavedResult()">My result</div>
       <div class="navbtn" onclick="go('home')">Home</div>
       <div class="navbtn" onclick="go('explore')">Explore</div>
       <div class="navbtn" onclick="go('about')">About</div>
@@ -263,8 +264,14 @@
          (the prior zip) and set RESEARCH_ENDPOINT above to your Apps Script /exec URL. -->
     <div class="panelbox" style="border-color:var(--accent2)">
       <div class="lbl" style="color:var(--accent2)">Keep your result</div>
-      <p style="color:var(--dim);font-size:13.5px;margin:6px 0 10px">Nothing here is collected or sent anywhere, your answers stay in your browser. If you want to keep your result or share it yourself, you can download it as a file.</p>
-      <button class="btn ghost" onclick="downloadResult()">⬇ Download my result (JSON)</button>
+      <p style="color:var(--dim);font-size:13.5px;margin:6px 0 10px">Nothing here is collected or sent anywhere, your answers stay in your browser. Save it in whatever form works best on your device.</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" onclick="saveResultImage()">🖼 Save as image</button>
+        <button class="btn ghost" onclick="copyResultText()">📋 Copy summary</button>
+        <button class="btn ghost" onclick="downloadResult()">⬇ Download JSON</button>
+      </div>
+      <p id="saveMsg" class="note" style="margin-top:10px;color:var(--good)"></p>
+      <div id="imgHolder"></div>
     </div>
 
     <div class="panelbox" id="deepCta">
@@ -561,11 +568,37 @@ let answers=new Array(ITEMS.length).fill(null);
 let lastResult=null;
 
 /* ============ NAV ============ */
-function go(id){
+let currentScreen='home';
+function go(id,fromPop){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const el=document.getElementById(id);if(el)el.classList.add('active');
   window.scrollTo({top:0});
+  currentScreen=id;
+  if(!fromPop){try{history.pushState({screen:id},'');}catch(e){}}
 }
+// Browser / phone Back button: move between in-app screens instead of leaving the app.
+window.addEventListener('popstate',e=>{
+  const id=(e.state&&e.state.screen)||'home';
+  if(id==='results'){ if(!lastResult&&!restoreResult()){go('home',true);return;} renderResult(); }
+  go(id,true);
+});
+
+/* ============ RESULT PERSISTENCE ============ */
+// Keep the finished result so navigating away, reloading, or hitting Back doesn't lose it.
+const LS_KEY='suspectrum_result_v7';
+function persistResult(){try{if(lastResult)localStorage.setItem(LS_KEY,JSON.stringify({lastResult,answers}));}catch(e){}}
+function restoreResult(){
+  try{const raw=localStorage.getItem(LS_KEY);if(!raw)return false;
+    const o=JSON.parse(raw);if(o&&o.lastResult){lastResult=o.lastResult;if(Array.isArray(o.answers))answers=o.answers;revealResultNav();return true;}
+  }catch(e){}
+  return false;
+}
+function revealResultNav(){const n=document.getElementById('navResult');if(n)n.style.display='';}
+function showSavedResult(){
+  if(!lastResult&&!restoreResult()){go('home');return;}
+  renderResult();go('results');
+}
+
 function showSub(name){
   document.querySelectorAll('#explore .tab').forEach((t,i)=>t.classList.toggle('active',t.getAttribute('onclick').includes(name)));
   document.querySelectorAll('.subview').forEach(v=>v.classList.remove('active'));
@@ -732,6 +765,7 @@ function renderResult(){
   }
   renderMaskRead();
   renderWellbeingRouting();renderTailored();renderDyadResult();
+  revealResultNav();persistResult();
 }
 function renderTypeBanner(){
   const r=lastResult;const el=document.getElementById('rProfile');if(!el)return;
@@ -860,6 +894,98 @@ function downloadJSON(obj,name){
   const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();
   setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+/* ---- Phone-friendly result outputs (image + text) ----
+   Blob downloads (the JSON button) are silently ignored by iOS Safari and some
+   mobile browsers, so these give a shareable image and a copyable text summary
+   that work where a file download doesn't. */
+function resultSummaryText(){
+  const r=lastResult;if(!r)return '';
+  const L=['My Suspectrum result'];
+  if(r.ndPositive&&r.ranked){
+    L.push('Primary strength: '+P(r.ranked[0]).name);
+    if(r.signature&&r.signature.length)L.push('Signature: '+r.signature.map(id=>P(id).name).join(', '));
+  }
+  L.push('Screening indication: '+r.type);
+  if(r.autScore!=null)L.push('Autistic domain: '+r.autScore+'/100');
+  if(r.adhdScore!=null)L.push('ADHD domain: '+r.adhdScore+'/100');
+  if(r.adhdPresentation)L.push('ADHD presentation: '+r.adhdPresentation);
+  if(r.mask!=null)L.push('Masking load: '+r.mask+'/100');
+  L.push('');L.push('A self-discovery screen, not a diagnosis. docmartin95.github.io/suspectrum');
+  return L.join('\n');
+}
+function copyResultText(){
+  const t=resultSummaryText();const msg=document.getElementById('saveMsg');
+  const done=()=>{if(msg)msg.textContent='✓ Summary copied — paste it anywhere.';};
+  const fallback=()=>{const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';
+    document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);done();};
+  if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(done).catch(fallback);
+  else fallback();
+}
+function roundRect(g,x,y,w,h,r){g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();}
+function saveResultImage(){
+  const r=lastResult;if(!r){return;}
+  const W=1080,H=1350,c=document.createElement('canvas');c.width=W;c.height=H;const g=c.getContext('2d');
+  g.fillStyle='#0b0e17';g.fillRect(0,0,W,H);
+  const grad=g.createLinearGradient(0,0,W,0);grad.addColorStop(0,'#5ad1ff');grad.addColorStop(1,'#c08bff');
+  g.fillStyle=grad;g.fillRect(0,0,W,12);
+  g.textAlign='left';
+  let y=120;
+  g.fillStyle='#9fb0d0';g.font='600 30px system-ui,-apple-system,sans-serif';g.fillText('◇ SUSPECTRUM',80,y);
+  y+=90;
+  const nd=r.ndPositive&&r.ranked;
+  if(nd){
+    const top=P(r.ranked[0]);
+    g.font='96px system-ui,-apple-system,sans-serif';g.fillText(top.em||'',80,y+40);
+    g.fillStyle='#9fb0d0';g.font='600 24px system-ui,-apple-system,sans-serif';g.fillText('YOUR PRIMARY STRENGTH',200,y-10);
+    g.fillStyle='#eaf0ff';g.font='800 56px system-ui,-apple-system,sans-serif';g.fillText(top.name,200,y+45);
+    y+=110;
+    if(r.signature&&r.signature.length){g.fillStyle='#c08bff';g.font='600 26px system-ui,-apple-system,sans-serif';
+      g.fillText('Signature: '+r.signature.map(id=>P(id).name).join(' · '),80,y);y+=54;}
+  }else{
+    g.fillStyle='#eaf0ff';g.font='800 50px system-ui,-apple-system,sans-serif';g.fillText(r.type,80,y+30);y+=110;
+  }
+  g.strokeStyle='#28324a';g.lineWidth=2;g.beginPath();g.moveTo(80,y);g.lineTo(W-80,y);g.stroke();y+=64;
+  g.fillStyle='#eaf0ff';g.font='600 32px system-ui,-apple-system,sans-serif';g.fillText('Screening indication: '+r.type,80,y);y+=62;
+  const meter=(label,score,col)=>{
+    g.fillStyle='#9fb0d0';g.font='500 26px system-ui,-apple-system,sans-serif';g.fillText(label+' — '+score+'/100',80,y);y+=18;
+    g.fillStyle='#1b2336';roundRect(g,80,y,W-160,28,9);g.fill();
+    g.fillStyle=col;roundRect(g,80,y,Math.max(9,(W-160)*Math.max(0,Math.min(100,score))/100),28,9);g.fill();y+=74;
+  };
+  if(r.autScore!=null)meter('Autistic domain',r.autScore,'#5ad1ff');
+  if(r.adhdScore!=null)meter('ADHD domain',r.adhdScore,'#ffb454');
+  if(r.adhdPresentation){g.fillStyle='#9fb0d0';g.font='500 25px system-ui,-apple-system,sans-serif';g.fillText('ADHD presentation: '+r.adhdPresentation,80,y);y+=54;}
+  if(r.mask!=null)meter('Masking load',r.mask,'#c08bff');
+  g.fillStyle='#9fb0d0';g.font='400 23px system-ui,-apple-system,sans-serif';
+  g.fillText('A self-discovery screen, not a diagnosis.',80,H-110);
+  g.fillStyle='#5ad1ff';g.fillText('docmartin95.github.io/suspectrum',80,H-72);
+  if(c.toBlob)c.toBlob(b=>{b?shareOrSaveImage(b):showImageDataUrl(c.toDataURL('image/png'));},'image/png');
+  else showImageDataUrl(c.toDataURL('image/png'));
+}
+function shareOrSaveImage(blob){
+  const msg=document.getElementById('saveMsg');
+  try{
+    const file=new File([blob],'my-suspectrum-result.png',{type:'image/png'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})){
+      navigator.share({files:[file],title:'My Suspectrum result'})
+        .then(()=>{if(msg)msg.textContent='';})
+        .catch(()=>showImageBlob(blob));
+      return;
+    }
+  }catch(e){}
+  showImageBlob(blob);
+}
+function showImageBlob(blob){
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download='my-suspectrum-result.png';a.click();
+  showImageDataUrl(url,true);
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+}
+function showImageDataUrl(url,triedDownload){
+  const msg=document.getElementById('saveMsg'),holder=document.getElementById('imgHolder');
+  if(msg)msg.textContent=triedDownload?'If nothing downloaded, press and hold the image below to save it:':'Press and hold the image below to save it:';
+  if(holder)holder.innerHTML=`<img alt="My Suspectrum result" src="${url}" style="width:100%;margin-top:10px;border-radius:12px;border:1px solid var(--line)">`;
 }
 
 /* ============ OPT-IN RESEARCH BATTERY (paraphrased scaffolds — license the real scales before deployment; see Measurement-Plan.md) ============ */
@@ -1086,8 +1212,13 @@ const DYAD_OUTCOME=[
 let dyadOutcomeAnswers={};
 function dyadOutcomeScore(){const v=Object.values(dyadOutcomeAnswers);return v.length?Math.round(v.reduce((a,x)=>a+(x-1)/4*100,0)/v.length):null;}
 function encodeProfile(){
-  const r=lastResult;const obj={v:4,primary:r.ranked[0],flavor:r.flavor,powers:r.powers,mask:r.mask};
-  return btoa(unescape(encodeURIComponent(JSON.stringify(obj))));
+  const r=lastResult;const obj={v:4,primary:r.ranked[0],type:r.type,powers:r.powers,mask:r.mask};
+  // URL-safe base64 so the value survives being placed in a query string intact.
+  return btoa(unescape(encodeURIComponent(JSON.stringify(obj)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function decodeProfile(p){
+  let b=p.replace(/-/g,'+').replace(/_/g,'/');while(b.length%4)b+='=';
+  return JSON.parse(decodeURIComponent(escape(atob(b))));
 }
 function genCode(){
   const w=["OTTER","RAVEN","BADGER","COMET","CEDAR","EMBER","MOSS","RIVER","FINCH","ONYX","LARK","SABLE","HERON","FLINT"];
@@ -1098,7 +1229,7 @@ let myPairCode=null;
 function makeShareLink(){
   if(!lastResult){return;}
   myPairCode=myPairCode||genCode();
-  const url=location.origin+location.pathname+"?pair="+encodeURIComponent(myPairCode)+"&p="+encodeProfile();
+  const url=location.origin+location.pathname+"?pair="+encodeURIComponent(myPairCode)+"&p="+encodeURIComponent(encodeProfile());
   const area=document.getElementById('shareArea');
   area.innerHTML=`<div class="sharebox"><div class="note" style="margin-bottom:4px">Send this link to your friend or coworker. When they finish, they'll see how you two fit.</div>
     <input type="text" id="shareUrl" readonly value="${url}">
@@ -1116,7 +1247,7 @@ let inviteProfile=null,invitePair=null;
 (function readInvite(){
   try{
     const q=new URLSearchParams(location.search);const p=q.get('p'),pair=q.get('pair');
-    if(p&&pair){inviteProfile=JSON.parse(decodeURIComponent(escape(atob(p))));invitePair=pair;}
+    if(p&&pair){inviteProfile=decodeProfile(p);invitePair=pair;}
   }catch(e){inviteProfile=null;invitePair=null;}
   const b=document.getElementById('inviteBanner');
   if(inviteProfile&&invitePair&&b){b.innerHTML=`<div class="invite">A friend shared their Suspectrum profile with you (code <strong>${invitePair}</strong>). Take the test below and you'll see how your powers fit together.</div>`;}
@@ -1134,8 +1265,9 @@ function squadVerdict(a,b){
 }
 function renderDyadResult(){
   const box=document.getElementById('dyadResult');if(!box)return;
-  if(!inviteProfile||!lastResult){box.innerHTML='';return;}
+  if(!inviteProfile||!lastResult||!lastResult.ranked||!lastResult.ranked.length){box.innerHTML='';return;}
   const aP=P(inviteProfile.primary),bP=P(lastResult.ranked[0]);
+  if(!aP||!bP){box.innerHTML='';return;}
   box.innerHTML=`<div class="panelbox" style="border-color:var(--accent2)">
     <div class="lbl" style="color:var(--accent2)">Your squad fit · code ${invitePair}</div>
     <p style="margin:6px 0"><strong>${aP.em} ${aP.name}</strong> (them) + <strong>${bP.em} ${bP.name}</strong> (you)</p>
@@ -1222,6 +1354,12 @@ function updateMask(){
   else v.innerHTML=`<span class="vtag" style="color:var(--good)">Low mask</span><br>Surface (<strong>${surf}</strong>) ≈ true (<strong>${TRUE}</strong>). But most high-masking people never look like this, which is why the layer exists.`;
 }
 slider.oninput=updateMask;updateMask();
+
+/* ============ INIT ============ */
+// Bring back a previous result (so the "My result" tab appears after a reload),
+// and seed history so the Back button navigates within the app.
+restoreResult();
+try{history.replaceState({screen:currentScreen},'');}catch(e){}
 </script>
 </body>
 </html>
