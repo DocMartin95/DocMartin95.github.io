@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About &middot; AI Learning Toolkit</title>
+<meta name="description" content="What the AI Learning Toolkit is, who made it, how tool requests work, and the terms it is shared under.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* About: one narrow reading column, no cards competing with the prose. */
+  .prose { max-width: 62ch; }
+  .prose h2 { margin-top: 2.2em; }
+  .prose h2:first-of-type { margin-top: 1.4em; }
+  .disclaimer {
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    color: var(--ink);
+    background: var(--tint);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin: 0 0 1.4em;
+    box-shadow: var(--shadow);
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="wordmark" href="index.html"><span class="dot" aria-hidden="true"></span>AI Learning Toolkit</a>
+    <nav aria-label="Tracks">
+      <a href="students.html">Students</a>
+      <a href="faculty.html">Faculty</a>
+      <a href="about.html" aria-current="page">About</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <div class="wrap wrap--narrow">
+    <div class="page-head">
+      <p class="eyebrow">About</p>
+      <h1>What this is</h1>
+    </div>
+
+    <div class="prose">
+      <p>The AI Learning Toolkit is a small, public library of AI tools for learning and teaching. Some are prompts you paste into whatever assistant you already use. Some are guides for building a tutor of your own. Some are worksheets with no AI in them at all. What they share is a stance: a tool should make a person do the thinking, not do the thinking for them.</p>
+
+      <p>That stance has a cost, and it is deliberate. A tutor here will not hand over an answer on the first ask. A study tool will make you attempt a question before it shows you a model response. Retrieval feels worse than rereading and works considerably better, so these are built to make you retrieve.</p>
+
+      <h2>Who made it</h2>
+      <p>Built and maintained by <strong>James Martin II, PhD</strong>. It lives on a personal account, not an institutional one, so it stays available regardless of where its author happens to be working. Questions, corrections, and collaborations are welcome at <a href="mailto:jm38@alumni.princeton.edu">jm38@alumni.princeton.edu</a>.</p>
+
+      <h2>How requests work</h2>
+      <p>Anyone can ask for a tool they wish existed. You do not need to know how to build it, or what to call it, or which platform it should run on. The request form asks the questions that make a good specification, so a plain description of your problem comes out the other end already well-formed.</p>
+
+      <ol class="steps">
+        <li><strong>You submit the form.</strong> It walks through Task, Role, Audience, Create, and Intent. You can attach a file, or just paste a link to an example if you would rather not sign in.</li>
+        <li><strong>It gets reviewed</strong> for how clear the need is, who it serves, and whether it is feasible to build well.</li>
+        <li><strong>It gets built, or it does not.</strong> A solution might be a prompt, a Gemini Gem or custom GPT, a NotebookLM, a page on this site, or plain written instructions. Sometimes the honest answer is that no tool is needed.</li>
+        <li><strong>Finished tools land here</strong>, on the track they belong to.</li>
+      </ol>
+
+      <p><a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLSerSm1qCP2Snyl-9muM-snReBUJaLsD_PfKhPtI-Etm9-B4SQ/viewform">Request a tool</a></p>
+
+      <h2>What is not here</h2>
+      <p>Some material is shared directly rather than published. The full Socratic Tutor Master Template, the topic-agnostic engine the tutors are built from, is shared with collaborators and training cohorts on request. Any tutor version that contains a case answer key, or that names protected cases or diagnoses, stays out of this repository entirely.</p>
+
+      <h2>The disclaimer</h2>
+      <p class="disclaimer">These are unofficial educational tools. They are not affiliated with, endorsed by, or approved by any institution, and they can produce errors. Verify anything important against a trusted source. Never enter patient information (PHI) or other sensitive data into any AI tool.</p>
+      <p>That last sentence is the one that matters most. Consumer AI tools are not approved environments for protected data. Use de-identified or synthetic examples.</p>
+
+      <h2>License</h2>
+      <p>Everything here is shared under <a href="https://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International (CC BY-NC 4.0)</a>. Adapt it, remix it, use it in your own teaching, and credit James Martin II. Commercial repackaging is not permitted.</p>
+
+      <p style="margin-top:2.4em;"><a href="index.html">Back to the start</a> &nbsp;&middot;&nbsp; <a href="students.html">Student tools</a> &nbsp;&middot;&nbsp; <a href="faculty.html">Faculty tools</a></p>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap wrap--narrow">
+    <p>These are unofficial educational tools. They are not affiliated with, endorsed by, or approved by any institution, and they can produce errors. Verify anything important against a trusted source. Never enter patient information (PHI) or other sensitive data into any AI tool.</p>
+    <div class="meta">
+      <span>&copy; James Martin II, PhD</span>
+      <span><a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a></span>
+      <span><a href="mailto:jm38@alumni.princeton.edu">jm38@alumni.princeton.edu</a></span>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

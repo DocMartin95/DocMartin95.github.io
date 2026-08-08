@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Faculty tools &middot; AI Learning Toolkit</title>
+<meta name="description" content="The case for Socratic AI tutors, guides for building your own, and a ten-task curriculum mapping toolkit.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* Faculty page: a single stacked column of wide rows rather than a grid,
+     so longer descriptions have room and the gated entry can stand apart. */
+  .stack { display: flex; flex-direction: column; gap: 18px; margin-bottom: 46px; }
+  .gated { background: #fff; box-shadow: none; border: 1px dashed var(--line); }
+  .gated .circle { background: #fff; color: var(--muted); box-shadow: inset 0 0 0 2px var(--line); }
+  .gated h3 { color: var(--muted); }
+  .head-wide { padding: 56px 0 36px; }
+  .head-wide .lede { margin-top: .4em; }
+</style>
+</head>
+<body>
+<a class="skip" href="#tools">Skip to the tools</a>
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="wordmark" href="index.html"><span class="dot dot--amber" aria-hidden="true"></span>AI Learning Toolkit</a>
+    <nav aria-label="Tracks">
+      <a href="students.html">Students</a>
+      <a href="faculty.html" aria-current="page">Faculty</a>
+      <a href="about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="head-wide">
+      <p class="eyebrow">Faculty track</p>
+      <h1>Build the tutor, map the course.</h1>
+      <p class="lede">Materials you can present, hand out, or use as a starting point. Everything here is meant to be adapted to your own course rather than adopted whole.</p>
+    </div>
+
+    <section class="stack" id="tools" aria-label="Faculty tools">
+
+      <article class="tool tool--row">
+        <span class="circle circle--amber" aria-hidden="true">W</span>
+        <div class="body">
+          <ul class="tags">
+            <li class="tag"><span class="dot dot--amber" aria-hidden="true"></span>The case</li>
+            <li class="tag">Slides + handout</li>
+            <li class="tag"><span class="dot" aria-hidden="true"></span>Ready</li>
+          </ul>
+          <h3>Why Build a Socratic AI Tutor</h3>
+          <p>The evidence and architecture behind Socratic tutors, to present or hand out.</p>
+          <div class="actions">
+            <a href="tools/why-build-a-socratic-tutor/Why_Build_A_Socratic_Tutor.pptx" download>Download slides (PPTX)</a>
+            <a href="tools/why-build-a-socratic-tutor/Why_Build_A_Socratic_Tutor_Handout.pdf">Handout (PDF)</a>
+            <a class="secondary" href="https://github.com/DocMartin95/DocMartin95.github.io/blob/main/ai-learning-toolkit/tools/why-build-a-socratic-tutor/README.md">How to use</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="tool tool--row">
+        <span class="circle" aria-hidden="true">T</span>
+        <div class="body">
+          <ul class="tags">
+            <li class="tag"><span class="dot" aria-hidden="true"></span>How-to</li>
+            <li class="tag">Gem / GPT / Project / NotebookLM</li>
+            <li class="tag"><span class="dot dot--amber" aria-hidden="true"></span>Ready</li>
+          </ul>
+          <h3>AI Tutor Creation Guide</h3>
+          <p>How to build a tutor as a Gemini Gem, a ChatGPT custom GPT, a Claude Project, or in NotebookLM.</p>
+          <div class="actions">
+            <a href="tools/ai-tutor-creation-guides/AI_Tutor_Creation_Guide.md" download>View / download</a>
+            <a class="secondary" href="https://github.com/DocMartin95/DocMartin95.github.io/blob/main/ai-learning-toolkit/tools/ai-tutor-creation-guides/README.md">How to use</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="tool tool--row">
+        <span class="circle" aria-hidden="true">C</span>
+        <div class="body">
+          <ul class="tags">
+            <li class="tag"><span class="dot" aria-hidden="true"></span>Curriculum</li>
+            <li class="tag">Prompts + tables</li>
+            <li class="tag"><span class="dot dot--amber" aria-hidden="true"></span>Ready</li>
+          </ul>
+          <h3>Curriculum Mapping Toolkit</h3>
+          <p>Ten AI-assisted tasks for mapping objectives, frameworks, activities, and assessments.</p>
+          <div class="actions">
+            <a href="tools/curriculum-mapping/Curriculum_Mapping_Toolkit.md" download>View / download</a>
+            <a class="secondary" href="https://github.com/DocMartin95/DocMartin95.github.io/blob/main/ai-learning-toolkit/tools/curriculum-mapping/README.md">How to use</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="tool tool--row">
+        <span class="circle circle--ink" aria-hidden="true">P</span>
+        <div class="body">
+          <ul class="tags">
+            <li class="tag"><span class="dot dot--ink" aria-hidden="true"></span>Prompting</li>
+            <li class="tag">Students &amp; faculty</li>
+            <li class="tag"><span class="dot dot--amber" aria-hidden="true"></span>Ready</li>
+          </ul>
+          <h3>TRACI Prompt Literacy</h3>
+          <p>A reusable way to structure any prompt: Task, Role, Audience, Create, Intent. Also on the student track.</p>
+          <div class="actions">
+            <a href="tools/traci-prompt-literacy/TRACI_Prompt_Literacy.md" download>View / download</a>
+            <a class="secondary" href="https://github.com/DocMartin95/DocMartin95.github.io/blob/main/ai-learning-toolkit/tools/traci-prompt-literacy/README.md">How to use</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="tool tool--row gated">
+        <span class="circle" aria-hidden="true">M</span>
+        <div class="body">
+          <ul class="tags">
+            <li class="tag tag--soon"><span class="dot dot--hollow" aria-hidden="true"></span>Engine</li>
+            <li class="tag tag--soon">By request</li>
+          </ul>
+          <h3>Socratic Tutor Master Template</h3>
+          <p>The full topic-agnostic architecture. The full build is shared directly with collaborators and training cohorts.</p>
+          <div class="actions">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSerSm1qCP2Snyl-9muM-snReBUJaLsD_PfKhPtI-Etm9-B4SQ/viewform">Request access</a>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <section class="request">
+      <div>
+        <h2>Want a tool that isn&rsquo;t here?</h2>
+        <p>Describe the teaching problem, not the software. The form is structured so a good request writes itself, and every submission lands in a queue that gets read.</p>
+      </div>
+      <a class="btn btn--amber" href="https://docs.google.com/forms/d/e/1FAIpQLSerSm1qCP2Snyl-9muM-snReBUJaLsD_PfKhPtI-Etm9-B4SQ/viewform">Request a tool</a>
+    </section>
+
+    <p style="margin-bottom:44px;"><a href="students.html">Looking for the student track?</a> &nbsp;&middot;&nbsp; <a href="index.html">Back to the start</a></p>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>These are unofficial educational tools. They are not affiliated with, endorsed by, or approved by any institution, and they can produce errors. Verify anything important against a trusted source. Never enter patient information (PHI) or other sensitive data into any AI tool.</p>
+    <div class="meta">
+      <span>&copy; James Martin II, PhD</span>
+      <span><a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a></span>
+      <span><a href="mailto:jm38@alumni.princeton.edu">jm38@alumni.princeton.edu</a></span>
+      <span><a href="about.html">About</a></span>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

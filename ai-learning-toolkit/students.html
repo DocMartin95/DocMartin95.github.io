@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Student tools &middot; AI Learning Toolkit</title>
+<meta name="description" content="A Socratic tutor, study tools built on retrieval practice, and a way to structure any AI prompt.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* Student page: an intro that sits beside the header, then an even card grid. */
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: 34px 56px;
+    align-items: end;
+    padding: 56px 0 38px;
+  }
+  .split .aside { padding-bottom: 6px; }
+  .split .aside p { color: var(--muted); font-size: .98rem; }
+  @media (max-width: 780px) {
+    .split { grid-template-columns: 1fr; align-items: start; gap: 20px; padding-bottom: 30px; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#tools">Skip to the tools</a>
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="wordmark" href="index.html"><span class="dot" aria-hidden="true"></span>AI Learning Toolkit</a>
+    <nav aria-label="Tracks">
+      <a href="students.html" aria-current="page">Students</a>
+      <a href="faculty.html">Faculty</a>
+      <a href="about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <p class="eyebrow">Student track</p>
+        <h1>Study with it, not from it.</h1>
+      </div>
+      <div class="aside">
+        <p>Every tool here asks you to produce something before it gives you anything. That is the whole design. Retrieval feels worse than rereading and works far better, so these tools are built to make you retrieve.</p>
+      </div>
+    </div>
+
+    <section class="tools" id="tools" aria-label="Student tools">
+
+      <article class="tool">
+        <ul class="tags">
+          <li class="tag"><span class="dot" aria-hidden="true"></span>Socratic tutor</li>
+          <li class="tag">Any platform</li>
+          <li class="tag"><span class="dot dot--amber" aria-hidden="true"></span>Ready</li>
+        </ul>
+        <h3>Professor Dobbi: Cardio/Nephro Tutor</h3>
+        <p>A study partner that teaches cardiology and nephrology by asking, not telling.</p>
+        <div class="actions">
+          <a href="tools/professor-dobbi-cardio-nephro/ProfDobbi_CardioNephro_Tutor_Deployable.md" download>View / download</a>
+          <a class="secondary" href="https://github.com/DocMartin95/DocMartin95.github.io/blob/main/ai-learning-toolkit/tools/professor-dobbi-cardio-nephro/README.md">How to use</a>
+        </div>
+      </article>
+
+      <article class="tool">
+        <ul class="tags">
+          <li class="tag"><span class="dot" aria-hidden="true"></span>Worksheets</li>
+          <li class="tag">Any subject</li>
+          <li class="tag"><span class="dot dot--amber" aria-hidden="true"></span>Ready</li>
+        </ul>
+        <h3>Study Skills Toolkit</h3>
+        <p>Adaptive question generator, free-response practice, wrong-answer journal, study planner, fast/slow workbook.</p>
+        <div class="actions">
+          <a href="tools/study-skills-toolkit/Study_Skills_Toolkit.md" download>View / download</a>
+          <a class="secondary" href="https://github.com/DocMartin95/DocMartin95.github.io/blob/main/ai-learning-toolkit/tools/study-skills-toolkit/README.md">How to use</a>
+        </div>
+      </article>
+
+      <article class="tool">
+        <ul class="tags">
+          <li class="tag"><span class="dot" aria-hidden="true"></span>Prompting</li>
+          <li class="tag">Students &amp; faculty</li>
+          <li class="tag"><span class="dot dot--amber" aria-hidden="true"></span>Ready</li>
+        </ul>
+        <h3>TRACI Prompt Literacy</h3>
+        <p>A reusable way to structure any prompt: Task, Role, Audience, Create, Intent.</p>
+        <div class="actions">
+          <a href="tools/traci-prompt-literacy/TRACI_Prompt_Literacy.md" download>View / download</a>
+          <a class="secondary" href="https://github.com/DocMartin95/DocMartin95.github.io/blob/main/ai-learning-toolkit/tools/traci-prompt-literacy/README.md">How to use</a>
+        </div>
+      </article>
+
+    </section>
+
+    <section class="request">
+      <div>
+        <h2>Wish a tool existed?</h2>
+        <p>Describe it in plain words. You do not need to know how to build it, or even what to call it. The form asks the right questions for you.</p>
+      </div>
+      <a class="btn btn--amber" href="https://docs.google.com/forms/d/e/1FAIpQLSerSm1qCP2Snyl-9muM-snReBUJaLsD_PfKhPtI-Etm9-B4SQ/viewform">Request a tool</a>
+    </section>
+
+    <p style="margin-bottom:44px;"><a href="faculty.html">Looking for the faculty track?</a> &nbsp;&middot;&nbsp; <a href="index.html">Back to the start</a></p>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>These are unofficial educational tools. They are not affiliated with, endorsed by, or approved by any institution, and they can produce errors. Verify anything important against a trusted source. Never enter patient information (PHI) or other sensitive data into any AI tool.</p>
+    <div class="meta">
+      <span>&copy; James Martin II, PhD</span>
+      <span><a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a></span>
+      <span><a href="mailto:jm38@alumni.princeton.edu">jm38@alumni.princeton.edu</a></span>
+      <span><a href="about.html">About</a></span>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
