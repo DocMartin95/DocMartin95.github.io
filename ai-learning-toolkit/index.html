@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Learning Toolkit</title>
+<meta name="description" content="Practical AI tools for learning and teaching, built to make people think, not to think for them.">
+<meta property="og:title" content="AI Learning Toolkit">
+<meta property="og:description" content="Practical AI tools for learning and teaching, built to make people think, not to think for them.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:wght@500;600&display=swap">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* Landing page only: a tall, quiet opening before the two doors. */
+  .hero { padding: clamp(64px, 13vh, 128px) 0 clamp(40px, 7vh, 70px); }
+  .hero h1 { max-width: 15ch; }
+  .hero .purpose {
+    font-family: var(--serif);
+    font-size: clamp(1.12rem, 2.3vw, 1.42rem);
+    color: var(--muted);
+    max-width: 40ch;
+    margin-top: .55em;
+    line-height: 1.45;
+  }
+  .byline { font-size: .93rem; color: var(--muted); margin: 26px 0 0; }
+  .byline .dot { margin-right: .5em; vertical-align: baseline; }
+  .third {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 26px;
+    align-items: baseline;
+    font-size: .95rem;
+    color: var(--muted);
+    margin-bottom: 56px;
+  }
+  .third a { font-weight: 600; text-decoration: none; }
+  .third a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<a class="skip" href="#doors">Skip to the two tracks</a>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <p class="eyebrow">AI Learning Toolkit</p>
+      <h1>Tools that make you think.</h1>
+      <p class="purpose">Practical AI tools for learning and teaching, built to make people think, not to think for them.</p>
+      <p class="byline"><span class="dot dot--amber"></span>Built and maintained by James Martin II, PhD</p>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="doors" id="doors">
+      <a class="door door--student" href="students.html">
+        <span class="circle" aria-hidden="true">S</span>
+        <h2>I&rsquo;m a student</h2>
+        <p>A Socratic tutor that refuses to just hand you the answer, study tools built on retrieval practice, and a way to write prompts that actually work.</p>
+        <span class="go">Student tools</span>
+      </a>
+
+      <a class="door door--faculty" href="faculty.html">
+        <span class="circle circle--amber" aria-hidden="true">F</span>
+        <h2>I&rsquo;m faculty</h2>
+        <p>The evidence and architecture behind Socratic tutors, step-by-step guides for building your own, and a ten-task toolkit for mapping a curriculum.</p>
+        <span class="go">Faculty tools</span>
+      </a>
+    </div>
+
+    <p class="third">
+      <span><a href="about.html">What this is, and how it works</a></span>
+      <span><a href="https://docs.google.com/forms/d/e/1FAIpQLSerSm1qCP2Snyl-9muM-snReBUJaLsD_PfKhPtI-Etm9-B4SQ/viewform">Request a tool you wish existed</a></span>
+    </p>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p>These are unofficial educational tools. They are not affiliated with, endorsed by, or approved by any institution, and they can produce errors. Verify anything important against a trusted source. Never enter patient information (PHI) or other sensitive data into any AI tool.</p>
+    <div class="meta">
+      <span>&copy; James Martin II, PhD</span>
+      <span><a href="https://creativecommons.org/licenses/by-nc/4.0/">CC BY-NC 4.0</a></span>
+      <span><a href="mailto:jm38@alumni.princeton.edu">jm38@alumni.princeton.edu</a></span>
+      <span><a href="about.html">About</a></span>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
