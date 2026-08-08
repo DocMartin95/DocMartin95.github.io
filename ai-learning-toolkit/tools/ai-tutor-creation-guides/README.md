@@ -10,7 +10,7 @@ Walks through building your own AI tutor on any of the four common platforms. Th
 
 ## How to use it
 
-1. Open [`AI_Tutor_Creation_Guide.md`](AI_Tutor_Creation_Guide.md) and read the "Before you start" section first.
+1. Download [`AI_Tutor_Creation_Guide.docx`](AI_Tutor_Creation_Guide.docx) and read the "Before you start" section first.
 2. Get three things ready: your instructions (the system prompt), your sources (syllabus, objectives, notes, readings), and a structured prompt habit. Run thin instructions through [TRACI](../traci-prompt-literacy/README.md) before you build.
 3. Pick the option that matches the platform your learners already have: a Gemini Gem, a ChatGPT custom GPT, a Claude Project, or NotebookLM.
 4. Follow the spirit of each step rather than the exact button names, which shift as the platforms update.

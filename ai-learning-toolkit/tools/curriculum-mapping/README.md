@@ -12,7 +12,7 @@ Tasks run from course context setup and writing measurable objectives, through m
 
 ## How to use it
 
-1. Open [`Curriculum_Mapping_Toolkit.md`](Curriculum_Mapping_Toolkit.md) and find your task in the index at the top.
+1. Download [`Curriculum_Mapping_Toolkit.docx`](Curriculum_Mapping_Toolkit.docx) and find your task in the index at the top.
 2. Gather what that task says to bring, usually a syllabus, objectives, or exam items.
 3. Work either way: fill the task's table yourself and then paste a prompt with your content, or paste the whole task into your AI tool along with your materials and let it help you fill the table first, then run the prompts in the same chat.
 4. Review every mapping before you act on it. Framework alignment in particular needs a human check.

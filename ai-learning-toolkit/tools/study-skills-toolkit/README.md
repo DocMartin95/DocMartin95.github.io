@@ -12,7 +12,7 @@ It is subject-agnostic. Name your actual assessment in the prompt and it adapts.
 
 ## How to use it
 
-1. Open [`Study_Skills_Toolkit.md`](Study_Skills_Toolkit.md) and pick the tool that matches what you need right now. Nothing depends on anything else.
+1. Download [`Study_Skills_Toolkit.docx`](Study_Skills_Toolkit.docx) and pick the tool that matches what you need right now. Nothing depends on anything else.
 2. Copy that tool's prompt into any AI assistant.
 3. Fill in the bracketed parts: your course or unit, your topics with self-rated confidence, and the exam you are preparing for.
 4. Answer before you read. Every prompt is written to withhold the model answer until you attempt the question, so do not skip ahead.

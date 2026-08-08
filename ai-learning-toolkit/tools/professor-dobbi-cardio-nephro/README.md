@@ -1,4 +1,4 @@
-# Professor Dobbi: Cardio/Nephro Tutor
+# Example: Cardiology & Nephrology Tutor
 
 **For:** students
 **Platform:** a prompt you paste (Gemini Gem, Claude Project, custom GPT, or any assistant)
@@ -6,13 +6,15 @@
 
 ## What it does
 
-A study partner that teaches cardiology and nephrology by asking, not telling. It walks through cardiovascular and renal material and pushes you to reason toward the answer yourself, ending every reply with a question. The struggle is the point: it is what makes the material stick.
+A finished example built from the [Build Your Own Socratic Study Partner](../build-your-own-socratic-study-partner/README.md) template, filled in for a medical-school cardiology and nephrology block. It teaches by asking, not telling, and ends every reply with a question.
+
+Use it two ways: as a working tutor if you are studying this material, or as a worked example of what a filled-in template looks like before you build your own.
 
 This is the deployable copy. The answer key for specific block cases has been removed, so it is safe to share and adapt.
 
 ## How to use it
 
-1. Open [`ProfDobbi_CardioNephro_Tutor_Deployable.md`](ProfDobbi_CardioNephro_Tutor_Deployable.md) and copy everything below the line marked **System prompt**.
+1. Download [`ProfDobbi_CardioNephro_Tutor_Deployable.docx`](ProfDobbi_CardioNephro_Tutor_Deployable.docx) and copy everything below the line marked **System prompt**.
 2. Paste it into a new Gemini Gem, Claude Project, or custom GPT as the instructions. Any assistant works; a saved, reusable container works best.
 3. If your tool allows uploads, add your own block materials (syllabus, notes, learning objectives) as sources so the tutor stays grounded in what you actually need to know.
 4. Start talking to it.

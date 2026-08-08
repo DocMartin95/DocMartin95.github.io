@@ -23,6 +23,8 @@
   @media (max-width: 780px) {
     .split { grid-template-columns: 1fr; align-items: start; gap: 20px; padding-bottom: 30px; }
   }
+  /* Four tools divide evenly, so hold two per row rather than orphaning the fourth. */
+  .tools { grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); }
 </style>
 </head>
 <body>
@@ -56,13 +58,28 @@
       <article class="tool">
         <ul class="tags">
           <li class="tag"><span class="dot" aria-hidden="true"></span>Socratic tutor</li>
+          <li class="tag">Any subject</li>
           <li class="tag">Any platform</li>
           <li class="tag"><span class="dot dot--amber" aria-hidden="true"></span>Ready</li>
         </ul>
-        <h3>Professor Dobbi: Cardio/Nephro Tutor</h3>
-        <p>A study partner that teaches cardiology and nephrology by asking, not telling.</p>
+        <h3>Build Your Own Socratic Study Partner</h3>
+        <p>A ready-to-use tutor prompt you make yours by filling in your subject. It teaches by asking, not telling.</p>
         <div class="actions">
-          <a href="tools/professor-dobbi-cardio-nephro/ProfDobbi_CardioNephro_Tutor_Deployable.md" download>View / download</a>
+          <a href="tools/build-your-own-socratic-study-partner/Student_Socratic_Tutor_Generic.docx" download>Download (Word)</a>
+          <a class="secondary" href="https://github.com/DocMartin95/DocMartin95.github.io/blob/main/ai-learning-toolkit/tools/build-your-own-socratic-study-partner/README.md">How to use</a>
+        </div>
+      </article>
+
+      <article class="tool">
+        <ul class="tags">
+          <li class="tag"><span class="dot" aria-hidden="true"></span>Socratic tutor</li>
+          <li class="tag">Worked example</li>
+          <li class="tag"><span class="dot dot--amber" aria-hidden="true"></span>Ready</li>
+        </ul>
+        <h3>Example: Cardiology &amp; Nephrology Tutor</h3>
+        <p>A finished example built from the Build Your Own template above, for a medical-school cardiology and nephrology block.</p>
+        <div class="actions">
+          <a href="tools/professor-dobbi-cardio-nephro/ProfDobbi_CardioNephro_Tutor_Deployable.docx" download>Download (Word)</a>
           <a class="secondary" href="https://github.com/DocMartin95/DocMartin95.github.io/blob/main/ai-learning-toolkit/tools/professor-dobbi-cardio-nephro/README.md">How to use</a>
         </div>
       </article>
@@ -76,7 +93,7 @@
         <h3>Study Skills Toolkit</h3>
         <p>Adaptive question generator, free-response practice, wrong-answer journal, study planner, fast/slow workbook.</p>
         <div class="actions">
-          <a href="tools/study-skills-toolkit/Study_Skills_Toolkit.md" download>View / download</a>
+          <a href="tools/study-skills-toolkit/Study_Skills_Toolkit.docx" download>Download (Word)</a>
           <a class="secondary" href="https://github.com/DocMartin95/DocMartin95.github.io/blob/main/ai-learning-toolkit/tools/study-skills-toolkit/README.md">How to use</a>
         </div>
       </article>
@@ -90,7 +107,7 @@
         <h3>TRACI Prompt Literacy</h3>
         <p>A reusable way to structure any prompt: Task, Role, Audience, Create, Intent.</p>
         <div class="actions">
-          <a href="tools/traci-prompt-literacy/TRACI_Prompt_Literacy.md" download>View / download</a>
+          <a href="tools/traci-prompt-literacy/TRACI_Prompt_Literacy.docx" download>Download (Word)</a>
           <a class="secondary" href="https://github.com/DocMartin95/DocMartin95.github.io/blob/main/ai-learning-toolkit/tools/traci-prompt-literacy/README.md">How to use</a>
         </div>
       </article>

@@ -12,7 +12,7 @@ It is also the backbone of the tool request form on this site, which is why a pl
 
 ## How to use it
 
-1. Open [`TRACI_Prompt_Literacy.md`](TRACI_Prompt_Literacy.md) and keep it somewhere you can glance at.
+1. Download [`TRACI_Prompt_Literacy.docx`](TRACI_Prompt_Literacy.docx) and keep it somewhere you can glance at.
 2. Before you send a prompt, name all five parts:
    - **Task** — what you want done, as a concrete action.
    - **Role** — who the AI should act as, which sets level and stance.
