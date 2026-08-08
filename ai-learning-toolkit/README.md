@@ -10,8 +10,25 @@ Built and maintained by James Martin II, PhD.
 
 Two tracks, one door each:
 
-- **Students** — a Socratic tutor that refuses to hand over the answer, study tools built on retrieval practice, and a way to structure any prompt.
+- **Students** — a Socratic tutor template you fill in with your own subject, a worked example of one, study tools built on retrieval practice, and a way to structure any prompt.
 - **Faculty** — the evidence and architecture behind Socratic tutors, guides for building your own on any platform, and a ten-task curriculum mapping toolkit.
+
+## Tool manifest
+
+| Tool | Track | Slug | Download | Status |
+|---|---|---|---|---|
+| Build Your Own Socratic Study Partner | Student | `build-your-own-socratic-study-partner` | `Student_Socratic_Tutor_Generic.docx` | ready |
+| Example: Cardiology & Nephrology Tutor | Student | `professor-dobbi-cardio-nephro` | `ProfDobbi_CardioNephro_Tutor_Deployable.docx` | ready |
+| Study Skills Toolkit | Student | `study-skills-toolkit` | `Study_Skills_Toolkit.docx` | ready |
+| TRACI Prompt Literacy | Both | `traci-prompt-literacy` | `TRACI_Prompt_Literacy.docx` | ready |
+| Why Build a Socratic AI Tutor | Faculty | `why-build-a-socratic-tutor` | `Why_Build_A_Socratic_Tutor.pptx`, `Why_Build_A_Socratic_Tutor_Handout.pdf` | ready |
+| AI Tutor Creation Guide | Faculty | `ai-tutor-creation-guides` | `AI_Tutor_Creation_Guide.docx` | ready |
+| Curriculum Mapping Toolkit | Faculty | `curriculum-mapping` | `Curriculum_Mapping_Toolkit.docx` | ready |
+| Socratic Tutor Master Template | Faculty | — | — | gated (request access) |
+
+Student track order on the page is: Build Your Own, Example: Cardiology & Nephrology, Study Skills Toolkit, TRACI Prompt Literacy.
+
+Downloads are Word documents so they open cleanly rather than as plain text. The original markdown sources are kept alongside each `.docx` for editing, but nothing on the site links to them.
 
 ## How to use it
 
@@ -42,10 +59,11 @@ Anyone can ask for a tool they wish existed, without knowing how to build it or 
 
 ## Adding a tool later
 
-1. Create `tools/<slug>/` and place the tool's file(s) there.
+1. Create `tools/<slug>/` and place the tool's file(s) there. Prefer `.docx` for anything a reader will download, since GitHub Pages serves `.md` as a plain-text download.
 2. Write `tools/<slug>/README.md` following the shape of the existing ones: **For**, **Platform**, **Status**, then *What it does*, *How to use it*, and *Notes* with the disclaimer.
 3. Add one card to the right track page, copying the pattern of an existing card. Student cards use the `.tool` grid; faculty cards use the `.tool--row` variant.
-4. Commit and push. Pages redeploys on its own.
+4. Add a row to the tool manifest above.
+5. Commit and push. Pages redeploys on its own.
 
 ## What is deliberately not here
 
