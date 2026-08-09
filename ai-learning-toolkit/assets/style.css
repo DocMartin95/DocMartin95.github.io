@@ -329,6 +329,49 @@ code {
 }
 .note strong { color: var(--ink); }
 
+/* ---------- support / tip jar ---------- */
+
+.support {
+  background: var(--tint);
+  border-top: 1px solid var(--line);
+  padding: 3rem 1.25rem;
+}
+.support-inner { max-width: 720px; margin: 0 auto; text-align: center; }
+.support h2 { font-size: 1.6rem; margin: 0 0 .5rem; }
+.support-lede { color: var(--muted); margin: 0 auto 1.75rem; max-width: 60ch; }
+.support-cards { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+.support-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.25rem;
+  width: 230px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .75rem;
+  box-shadow: var(--shadow);
+}
+.support-card img { width: 180px; height: 180px; display: block; border-radius: 6px; }
+.support-label { font-weight: 600; color: var(--ink); letter-spacing: .02em; }
+.support-btn {
+  display: inline-block;
+  width: 100%;
+  padding: .6rem 1rem;
+  border-radius: 9px;
+  font-weight: 600;
+  font-size: .95rem;
+  text-decoration: none;
+  color: #fff;
+  transition: transform .15s ease, filter .15s ease;
+}
+.support-btn:hover { filter: brightness(1.06); transform: translateY(-1px); color: #fff; }
+.support-btn--paypal { background: var(--teal); }
+.support-btn--venmo { background: var(--amber); color: #33230A; }
+.support-btn--venmo:hover { color: #33230A; }
+.support-thanks { color: var(--ink); font-weight: 600; font-size: 1.05rem; margin-top: 1.75rem; }
+.support-fine { color: var(--muted); font-size: .85rem; margin-top: 1rem; }
+@media (max-width: 520px) { .support-card { width: 100%; max-width: 280px; } }
+
 /* ---------- footer ---------- */
 
 .site-footer {
