@@ -15,20 +15,9 @@ Two tracks, one door each:
 
 ## Tool manifest
 
-| Tool | Track | Slug | Download | Status |
-|---|---|---|---|---|
-| Build Your Own Socratic Study Partner | Student | `build-your-own-socratic-study-partner` | `Student_Socratic_Tutor_Generic.docx` | ready |
-| Example: Cardiology & Nephrology Tutor | Student | `professor-dobbi-cardio-nephro` | `ProfDobbi_CardioNephro_Tutor_Deployable.docx` | ready |
-| Study Skills Toolkit | Student | `study-skills-toolkit` | `Study_Skills_Toolkit.docx` | ready |
-| TRACI Prompt Literacy | Both | `traci-prompt-literacy` | `TRACI_Prompt_Literacy.docx` | ready |
-| Why Build a Socratic AI Tutor | Faculty | `why-build-a-socratic-tutor` | `Why_Build_A_Socratic_Tutor.pptx`, `Why_Build_A_Socratic_Tutor_Handout.pdf` | ready |
-| AI Tutor Creation Guide | Faculty | `ai-tutor-creation-guides` | `AI_Tutor_Creation_Guide.docx` | ready |
-| Curriculum Mapping Toolkit | Faculty | `curriculum-mapping` | `Curriculum_Mapping_Toolkit.docx` | ready |
-| Socratic Tutor Master Template | Faculty | — | — | gated (request access) |
+The full list of tools — track, folder, download filename, and status — lives in [`BUILD_SPEC.md`](BUILD_SPEC.md) Section 4. That table is canonical and is kept in one place deliberately, so it cannot drift from a second copy.
 
-Student track order on the page is: Build Your Own, Example: Cardiology & Nephrology, Study Skills Toolkit, TRACI Prompt Literacy.
-
-Downloads are Word documents so they open cleanly rather than as plain text. The original markdown sources are kept alongside each `.docx` for editing, but nothing on the site links to them.
+Downloads are Word documents so they open cleanly rather than as plain text. The markdown sources are kept alongside each `.docx` for editing, but nothing on the site links to them.
 
 ## How to use it
 
@@ -46,8 +35,9 @@ ai-learning-toolkit/
   students.html       student track
   faculty.html        faculty track
   about.html          what this is, the disclaimer, how requests work
-  assets/style.css    all site styling
+  assets/             style.css plus the support-section QR images
   tools/<slug>/       one folder per tool: a README plus the tool's files
+  BUILD_SPEC.md       the working spec and canonical tool manifest
   LICENSE
 ```
 
@@ -62,8 +52,10 @@ Anyone can ask for a tool they wish existed, without knowing how to build it or 
 1. Create `tools/<slug>/` and place the tool's file(s) there. Prefer `.docx` for anything a reader will download, since GitHub Pages serves `.md` as a plain-text download.
 2. Write `tools/<slug>/README.md` following the shape of the existing ones: **For**, **Platform**, **Status**, then *What it does*, *How to use it*, and *Notes* with the disclaimer.
 3. Add one card to the right track page, copying the pattern of an existing card. Student cards use the `.tool` grid; faculty cards use the `.tool--row` variant.
-4. Add a row to the tool manifest above.
+4. Add a row to the manifest in [`BUILD_SPEC.md`](BUILD_SPEC.md) Section 4.
 5. Commit and push. Pages redeploys on its own.
+
+[`BUILD_SPEC.md`](BUILD_SPEC.md) is the working specification for this hub: structure, design tokens, the tool manifest, the gating policy, and the conventions worth knowing before changing anything.
 
 ## What is deliberately not here
 
